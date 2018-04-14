@@ -4,225 +4,76 @@
 <head>
 <style>
 
-div.game {
-    width: 80%;
-    float : left;
-}
-div.usr {
-    width: 20%;
-    float : right;
-}
-img.usr{
-	width:15%;
-	height:15%;
-}
 
 body {
 	background-color: BurlyWood;
 }
-ul.horiz{
-	padding-bottom: 2%
-}
-li.horiz {
-    display:inline;
-}
-.line{
-	    display:inline;
 
-}
-ul.game {
+ul.menu {
     list-style: none; 
-    text-align: center;
     margin-left: 20%;
 }
-li.game {
+li.menu {
 	padding-right : 2%;
 
 }
-img.game {
-	width:3%;
-	height:3%;
-}
-li.results {
-    padding-right: 1%;
-}
-img.results {
-	width:2%;
-	height:2%;
-}
-
-ul.usr {
-    list-style: none; 
-    text-align: left;
-    margin : 0;
-    padding : 0;
-}
-ul.usr li {
-	display:inline;
-	padding-right : 0%;
-	margin : 0;
-}
-
 .center {
     text-align: center;
-}
-h2.combi{
-	text-align: right;
-	margin-left: 0;
 }
 
 </style>
 </head>
 
-<h1 class="center"> <u> Mastermind </u></h1>
+<h1 class="center"> <u> Le méga Zoo de la mort </u></h1>
 
-<div class="game">
-	<!-- GAMETOKEN-->
-	<ul class="game">
+<div class="menu">
+	<ul class="menu">
 		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game00" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game01" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game02" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game03" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results00" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results01" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results02" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results03" src="empty.png" alt="empty" class="results"></li>
-			</ul>
+			Point a : 	<form action="/a.php" method = "post">
+			  <br>
+			  <input type="text" name="request" value="">
+			  <br>
+			  <input type="submit" value="Submit">
+			</form> 
+
 		</li>
 		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game10" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game11" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game12" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game13" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results10" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results11" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results12" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results13" src="empty.png" alt="empty" class="results"></li>
-			</ul>
+			Point b : 		
+			<form action="/b.php" method = "post">
+			  <br>
+			  <input type="text" name="request" value="">
+			  <br>
+			  <input type="submit" value="Submit">
+			</form> 
 		</li>
 		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game20" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game21" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game22" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game23" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results20" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results21" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results22" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results23" src="empty.png" alt="empty" class="results"></li>
-			</ul>
+			Point c : 		
+			<form action="/c.php" method = "post">
+			  <br>
+			  <input type="text" name="request" value="">
+			  <br>
+			  <input type="submit" value="Submit">
+			</form> 
 		</li>
 		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game30" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game31" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game32" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game33" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results30" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results31" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results32" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results33" src="empty.png" alt="empty" class="results"></li>
-			</ul>
+			Point d : 		
+			<form action="/d.php" method = "post">
+			  <br>
+			  <input type="text" name="request" value="">
+			  <br>
+			  <input type="submit" value="Submit">
+			</form> 
 		</li>
 		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game40" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game41" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game42" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game43" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results40" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results41" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results42" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results43" src="empty.png" alt="empty" class="results"></li>
-			</ul>
+			Point e : 		
+			<form action="/e.php" method = "post">
+			  <br>
+			  <input type="text" name="request" value="">
+			  <br>
+			  <input type="submit" value="Submit">
+			</form> 
 		</li>
-		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game50" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game51" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game52" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game53" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results50" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results51" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results52" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results53" src="empty.png" alt="empty" class="results"></li>
-			</ul>
-		</li>
-		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game60" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game61" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game62" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game63" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results60" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results61" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results62" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results63" src="empty.png" alt="empty" class="results"></li>
-			</ul>
-		</li>
-		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game70" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game71" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game72" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game73" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results70" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results71" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results72" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results73" src="empty.png" alt="empty" class="results"></li>
-			</ul>
-		</li>
-		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game80" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game81" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game82" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game83" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results80" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results81" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results82" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results83" src="empty.png" alt="empty" class="results"></li>
-			</ul>
-		</li>
-		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game90" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game91" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game92" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game93" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results90" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results91" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results92" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results93" src="empty.png" alt="empty" class="results"></li>
-			</ul>
-		</li>
-		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game100" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game101" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game102" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game103" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results100" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results101" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results102" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results103" src="empty.png" alt="empty" class="results"></li>
-			</ul>
-		</li>
-		<li>
-			<ul class="horiz">
-				<li class="game line"><img id="game110" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game111" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game112" src="empty.png" alt="empty" class="game"></li>
-				<li class="game line"><img id="game113" src="empty.png" alt="empty" class="game"></li>
-				<li class="results line"><img id="results110" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results111" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results112" src="empty.png" alt="empty" class="results"></li>
-				<li class="results line"><img id="results113" src="empty.png" alt="empty" class="results"></li>
-			</ul>
-		</li>
+
 </ul>
 </div>
 
@@ -231,105 +82,6 @@ h2.combi{
         .hideIfJS {display:none;}
     </style>
 </noscript>
-
-<div class="usr">
-	<h2 id="usrTitle">User Space</h2>
-	<ul class="usr" class="hideIfJS">
-	  <li><img src="white.png" alt="white" class="usr" id="usrImg0" onclick="changeColor(0)"></li>
-	  <li><img src="white.png" alt="white" class="usr" id="usrImg1" onclick="changeColor(1)"></li>
-	  <li><img src="white.png" alt="white" class="usr" id="usrImg2" onclick="changeColor(2)"></li>
-	  <li><img src="white.png" alt="white" class="usr" id="usrImg3" onclick="changeColor(3)"></li>
-	</ul>  
-	<button class="hideIfJS" onclick="sendAjax()">Submit</button>
-
-
-	<noscript>
-		<form action="/play.html" method = "post">
-		  Colors:<br>
-		  <input type="text" name="colors" value="red red red red">
-		  <br>
-		  <input type="submit" value="Submit">
-		</form> 
-	</noscript>
-
-<script>
-var currentLine = 0; 
-
-function sendAjax(){
-
-	var toSend ="";
-	for(i = 0;i < 4;i++){
-		toSend+="+";
-		toSend += document.getElementById("usrImg" + i).alt;
-	}
-	var xhttp = new XMLHttpRequest();
-
-	xhttp.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-		    var tokens = this.responseText.split("+");
-
-		    var color;
-			for(i = 0;i < 4;i++){
-				color = document.getElementById("usrImg" + i).alt;
- 				document.getElementById("game"+currentLine+i).alt = color;
- 				document.getElementById("game"+currentLine+i).src = color + ".png";
-			}
-
-			for(i = 0;i < tokens[0];i++){
- 				document.getElementById("results"+currentLine+i).alt = "red";
- 				document.getElementById("results"+currentLine+i).src = "red.png";
-			}
-			for(i = tokens[0];i < tokens[0]*1 + tokens[1]*1;i++){
- 				document.getElementById("results"+currentLine+i).alt = "white";
- 				document.getElementById("results"+currentLine+i).src = "white.png";
-			}
-			currentLine++;
-
-	}
-	};
-	xhttp.open("GET", "/request?" + toSend);
-	xhttp.send(); 
-
-}
-
-function changeColor(x) {
-	var element = document.getElementById("usrImg" + x);
-    var color = element.getAttribute("alt");
-
-	switch(color) {
-	    case "white":
-	        element.src = "black.png"; 
-	        element.alt = "black"; 
-	        break;
-	    case "black":
-	        element.src = "red.png"; 
-	        element.alt = "red"; 
-	        break;
-	    case "red":
-	        element.src = "blue.png"; 
-	        element.alt = "blue"; 
-	        break;
-	    case "blue":
-	        element.src = "yellow.png"; 
-	        element.alt = "yellow"; 
-	        break;
-	    case "yellow":
-	        element.src = "green.png"; 
-	        element.alt = "green"; 
-	        break
-	    case "green":
-	        element.src = "white.png"; 
-	        element.alt = "white"; 
-	        break;
-	    default:
-	        element.src = "white.png"; 
-	        element.alt = "white"; 
-	        break;
-}
-
-
-}
-</script>
 
 </div>
 
