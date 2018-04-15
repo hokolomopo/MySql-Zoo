@@ -127,8 +127,7 @@ CREATE TABLE IF NOT EXISTS Intervention(
     FOREIGN KEY (nom_scientique)             
         REFERENCES Animal(nom_scientique),	
    	FOREIGN KEY (n_registre)
-    	REFERENCES Veterinaire(n_registre),
-    CONSTRAINT 
-
+    	REFERENCES Veterinaire(n_registre)
+    #CONSTRAINT 
 )ENGINE=INNODB;
 SHOW TABLES;
