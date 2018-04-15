@@ -2,19 +2,19 @@ CREATE DATABASE IF NOT EXISTS zoo CHARACTER SET 'utf8';
 USE zoo;
 
 CREATE TABLE IF NOT EXISTS Espece (
-	nom_scientique VARCHAR(40) NOT NULL,
+	nom_scientifique VARCHAR(40) NOT NULL,
     nom_courant VARCHAR(40) NOT NULL,
     regime_alimentaire VARCHAR(40) NOT NULL,
-    PRIMARY KEY (nom_scientique)
+    PRIMARY KEY (nom_scientifique)
 )ENGINE=INNODB;
 SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Climat(
- 	nom_scientique VARCHAR(40) NOT NULL,
+ 	nom_scientifique VARCHAR(40) NOT NULL,
  	nom_climat VARCHAR(40) NOT NULL,
- 	PRIMARY KEY (nom_scientique, nom_climat),
- 	FOREIGN KEY (nom_scientique)             
-        REFERENCES Espece(nom_scientique)
+ 	PRIMARY KEY (nom_scientifique, nom_climat),
+ 	FOREIGN KEY (nom_scientifique)             
+        REFERENCES Espece(nom_scientifique)
 )ENGINE=INNODB;
 SHOW TABLES;
 
@@ -27,15 +27,15 @@ CREATE TABLE IF NOT EXISTS Enclos(
 SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Animal (
-	nom_scientique VARCHAR(40) NOT NULL,
+	nom_scientifique VARCHAR(40) NOT NULL,
     n_puce SMALLINT UNSIGNED NOT NULL,
     taille INT NOT NULL,
     sexe CHAR(1) NOT NULL,
     date_naissance DATETIME NOT NULL,
     n_enclos SMALLINT NOT NULL,
-    PRIMARY KEY (n_puce, nom_scientique),
-    FOREIGN KEY (nom_scientique)             
-        REFERENCES Espece(nom_scientique),
+    PRIMARY KEY (n_puce, nom_scientifique),
+    FOREIGN KEY (nom_scientifique)             
+        REFERENCES Espece(nom_scientifique),
     FOREIGN KEY (n_enclos)             
         REFERENCES Enclos(n_enclos)
 )ENGINE=INNODB;
@@ -101,14 +101,14 @@ CREATE TABLE IF NOT EXISTS Entretien (
 SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Provenance(
- 	nom_scientique VARCHAR(40) NOT NULL,
+ 	nom_scientifique VARCHAR(40) NOT NULL,
  	n_puce SMALLINT UNSIGNED NOT NULL,
 	nom_institution VARCHAR(40) NOT NULL,
- 	PRIMARY KEY (nom_scientique, n_puce),
+ 	PRIMARY KEY (nom_scientifique, n_puce),
  	FOREIGN KEY (n_puce)             
         REFERENCES Animal(n_puce),
-    FOREIGN KEY (nom_scientique)             
-        REFERENCES Animal(nom_scientique),
+    FOREIGN KEY (nom_scientifique)             
+        REFERENCES Animal(nom_scientifique),
    	FOREIGN KEY (nom_institution)
     	REFERENCES Institution(nom)
 )ENGINE=INNODB;
@@ -119,15 +119,14 @@ CREATE TABLE IF NOT EXISTS Intervention(
 	date_intervention DATETIME NOT NULL,
 	description VARCHAR(40), 
 	n_registre INT UNSIGNED NOT NULL,
- 	nom_scientique VARCHAR(40) NOT NULL,
+ 	nom_scientifique VARCHAR(40) NOT NULL,
  	n_puce SMALLINT UNSIGNED NOT NULL,
  	PRIMARY KEY (n_intervention),
  	FOREIGN KEY (n_puce)             
     	REFERENCES Animal(n_puce),
-    FOREIGN KEY (nom_scientique)             
-        REFERENCES Animal(nom_scientique),	
+    FOREIGN KEY (nom_scientifique)             
+        REFERENCES Animal(nom_scientifique),	
    	FOREIGN KEY (n_registre)
     	REFERENCES Veterinaire(n_registre)
-    #CONSTRAINT 
 )ENGINE=INNODB;
 SHOW TABLES;

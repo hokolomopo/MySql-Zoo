@@ -3,7 +3,7 @@ INTO TABLE Espece
 FIELDS
     TERMINATED BY ','
 IGNORE 1 LINES
-(nom_scientique, nom_courant, regime_alimentaire)
+(nom_scientifique, nom_courant, regime_alimentaire)
 ;
 
 LOAD DATA LOCAL INFILE '/tmp/db2018/Climat.txt'
@@ -11,9 +11,8 @@ INTO TABLE Climat
 FIELDS
     TERMINATED BY ','
 IGNORE 1 LINES
-(nom_scientique, nom_climat)
+(nom_scientifique, nom_climat)
 ;
-
 
 LOAD DATA LOCAL INFILE '/tmp/db2018/Enclos.txt'
 INTO TABLE Enclos
@@ -29,7 +28,7 @@ INTO TABLE Animal
 FIELDS
     TERMINATED BY ','
 IGNORE 1 LINES
-(nom_scientique, n_puce, taille, sexe, date_naissance_txt, n_enclos)
+(nom_scientifique, n_puce, taille, sexe, date_naissance_txt, n_enclos)
 ;
 UPDATE Animal SET date_naissance = STR_TO_DATE(date_naissance_txt, '%d/%m/%Y');
 ALTER TABLE Animal DROP date_naissance_txt;
@@ -90,7 +89,7 @@ INTO TABLE Provenance
 FIELDS
     TERMINATED BY ','
 IGNORE 1 LINES
-(nom_scientique, n_puce, nom_institution)
+(nom_scientifique, n_puce, nom_institution)
 ;
 
 ALTER TABLE Intervention ADD date_txt VARCHAR(40);
@@ -99,7 +98,7 @@ INTO TABLE Intervention
 FIELDS
     TERMINATED BY ','
 IGNORE 1 LINES
-(n_intervention, date_txt, description, n_registre, nom_scientique, n_puce)
+(n_intervention, date_txt, description, n_registre, nom_scientifique, n_puce)
 ;
 UPDATE Intervention SET date_intervention = STR_TO_DATE(date_txt, '%d/%m/%Y');
 ALTER TABLE Intervention DROP date_txt;
