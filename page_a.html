@@ -102,6 +102,44 @@ li
 }
 
 
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}  
+
+
+input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+.form {
+    position: :absolute;
+    left : 100px;
+    width: 60%;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+p{
+    padding-left: 20px;
+}
+
 </style>
 </head>
 <body>
@@ -144,7 +182,44 @@ li
 </div>
 
 <div class="main">
-  <h2 align="center">Super Zoo of the DOOM</h2>
+
+  <p> Vous pouvez ici choisir une table à afficher, avec éventuellement des contraintes. </p>
+  <div class="form">
+  <form action="/action_page.php" method="post">
+    <label for="table">Table</label>
+    <select id="table" name="table">
+      <option value="institution">Institution</option>
+      <option value="espece">Espèce</option>
+      <option value="animal">Animal</option>
+      <option value="climat">Climat</option>
+      <option value="enclos">Enclos</option>
+      <option value="materiel">Materiel</option>
+      <option value="personne">Personne</option>
+      <option value="veterinaire">Vétérinaire</option>
+      <option value="technicien">Technicien</option>
+      <option value="intervention">Intervention</option>
+      <option value="entretien">Entretien</option>
+      <option value="provenance">Provenance</option>
+    </select>
+
+
+    <label for="fname">Contrainte</label>
+    <select id="country" name="country">
+      <option value="sans">Sans</option>
+      <option value="avec">Contient/Egal</option>
+    </select>
+
+    <label for="champ">Champ de la table</label>
+    <input type="text" id="champ" name="champ" placeholder="Champ à contraindre...">
+
+    <label for="contrainte">Contrainte</label>
+    <input type="text" id="contrainte" name="contrainte" placeholder="Contrainte...">
+
+    <input type="submit" value="Soumettre">
+  </form>
+</div>
+
+
 
 </div>
      
