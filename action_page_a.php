@@ -118,7 +118,7 @@ input[type=submit] {
     background-color: #4CAF50;
     color: white;
     padding: 14px 20px;
-    margin: 8px 0;
+    margin: 8px 0;  
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -200,22 +200,6 @@ p{
 <div class="main">
 <?php
 
-
-$request = 'SELECT * FROM ' . $_POST['table'];
-$first = true;
-foreach($_POST as $cle => $valeur){
-    if($cle != 'table' and $valeur != null){
-        if($first){
-            $request = $request . " where " . $cle . "= '" . $valeur . "'";
-            $first = false;
-        }
-        else{
-            $request = $request . " and " . $cle . "= '" . $valeur . "'";
-        }
-    }
-}
-$request = $request . ";"; 
-
 try
 {
     $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
@@ -225,6 +209,36 @@ catch (Exception $e)
         die('Erreur : ' . $e->getMessage());
 }
 
+$request = 'SELECT * FROM ' . $_POST['table'];
+$first = true;
+$valid_request = true;
+
+foreach($_POST as $cle => $valeur){
+    //empeche l'utilisateur de placer des balises html et donc d'exécuter du javascript
+    $cle = htmlspecialchars($cle);
+    $valeur = htmlspecialchars($valeur);
+    if($cle != 'table'){
+        $test = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" . $_POST['table'] . "' AND column_name LIKE '" .  $cle . "'";
+        $test_exe = $bdd->prepare($test);
+        $test_exe->execute();
+        $nb_elem = count($test_exe->fetchAll());
+        if($nb_elem == 0)
+            exit("requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.");
+
+        if($valeur != null){
+            if($first){
+                $request = $request . " where " . $cle . "= '" . $valeur . "'";
+                $first = false;
+            }
+            else{
+                $request = $request . " and " . $cle . "= '" . $valeur . "'";
+            }
+        }
+    }
+}
+
+$request = $request . ";"; 
+
 $executable = $bdd->prepare($request);
 
 $executable->execute();
@@ -232,28 +246,27 @@ $executable->execute();
 $resultat = $executable->fetchAll();
 
 if(count($resultat) == 0)
-    echo "Pas de résultats </br>";
+    exit("Pas de résultats </br>");
 
-else{
-    echo "Voici le résultat de la requête: </br>";
+echo "Voici le résultat de la requête: </br>";
 
-    $i = 1;
-    foreach($resultat as $donnees){
-        echo "</br>";
-        if($i == 1){
-            echo "1er resultat: </br>";
-        }
-        else{
-            echo $i . " ème resultat: </br>";
-        }
-        echo "</br>";
-        foreach($donnees as $champ => $valeur){
-            if(is_string($champ))
-                echo $champ . " = " . $valeur . "</br>";
-        }
-        $i++;
+$i = 1;
+foreach($resultat as $donnees){
+    echo "</br>";
+    if($i == 1){
+        echo "1er resultat: </br>";
     }
+    else{
+        echo $i . " ème resultat: </br>";
+    }
+    echo "</br>";
+    foreach($donnees as $champ => $valeur){
+        if(is_string($champ))
+            echo $champ . " = " . $valeur . "</br>";
+    }
+    $i++;
 }
+
 ?>
 </br>
 <a href="page_a.html"> <input type="button" value="Faire une nouvelle requête"> </a>
