@@ -229,16 +229,19 @@ echo "</br>";
 //vérifie les conditions d'intégrité des valeurs entrées
 if($_POST['n_puce'] == "" || $_POST['n_puce'] < 0 || $_POST['n_puce'] > 65535) {
 	echo "Le numéro de puce doit être compris dans l'intervalle [0 ; 65 535]";
+	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
 if($_POST['taille'] == "" || $_POST['taille'] <= 0 || $_POST['taille'] > 2147483647) {
 	echo "La taille doit être comprise dans l'intervalle [1 ; 2 147 483 647] cm.";
+	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
 if($_POST['sexe'] != 'M' && $_POST['sexe'] != 'F') {
 	echo "Le sexe n'est pas valide, il doit être indiqué par M ou F.";
+	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -250,6 +253,7 @@ if($annee == false || $annee < 1900 || $annee > 2018 || $mois == false || $mois 
 || $mois > 12 || $jour == false || $jour <= 0 || $jour > 31) {
 	echo "La date doit être fournie au format aaaa*mm*jj où les * peuvent être remplacées par n'importe quel caractère,</br>";
 	echo "et correspondre à une date valide dans l'intervalle [1900/01/01 ; 2018-12-31]";
+	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -261,6 +265,7 @@ $fetch_résultat = $executable->fetch();
 $bon_nom = $fetch_résultat['bon_nom'];
 if ($bon_nom == 0) {
 	echo "L'espèce doit appartenir à la base de donnée.";
+	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -271,6 +276,7 @@ $fetch_résultat = $executable->fetch();
 $bon_enclos = $fetch_résultat['bon_enclos'];
 if ($bon_enclos == 0) {
 	echo "L'enclos doit exister.";
+	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -293,6 +299,7 @@ if ($bon_animal != 0) {
 		echo "</br>";
 		$fetch_résultat = $executable->fetch();
 	}
+	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -343,6 +350,7 @@ if($_POST['avertissement_confirmé'] == "faux") {
 			<input type=\"submit\" value=\"Ajouter quand même\">
 		</div>
 		";
+		echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 		return;
 	}
 }
@@ -362,6 +370,7 @@ $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':
 $executable->fetchAll();
 
 ?>
+<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>
 </div>
 </body>
 </html>
