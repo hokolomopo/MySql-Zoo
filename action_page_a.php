@@ -183,15 +183,16 @@ p{
 
 <div class="main">
 Voici le résultat de la requête: </br>
-<php?
+<?php
+
 
 $request = 'SELECT * FROM ' . $_POST['table'];
 $first = true;
 foreach($_POST as $cle => $valeur){
-    if(cle != 'table'){
-        if(first){
+    if($cle != 'table' and $valeur != null){
+        if($first){
             $request = $request . " where " . $cle . "= '" . $valeur . "'";
-            first = false;
+            $first = false;
         }
         else{
             $request = $request . " and " . $cle . "= '" . $valeur . "'";
@@ -199,6 +200,15 @@ foreach($_POST as $cle => $valeur){
     }
 }
 $request = $request . ";"; 
+
+try
+{
+    $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
+}
+catch (Exception $e)
+{
+        die('Erreur : ' . $e->getMessage());
+}
 
 $executable = $bdd->prepare($request);
 
