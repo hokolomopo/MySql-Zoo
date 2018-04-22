@@ -128,6 +128,22 @@ input[type=submit]:hover {
     background-color: #45a049;
 }
 
+input[type=button] {
+    display: block;
+    width: 50%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+a{
+    text-decoration: none;
+}
+
 .form {
     position: :absolute;
     left : 100px;
@@ -182,8 +198,8 @@ p{
 </div>
 
 <div class="main">
-Voici le résultat de la requête: </br>
 <?php
+
 
 $request = 'SELECT * FROM ' . $_POST['table'];
 $first = true;
@@ -213,12 +229,34 @@ $executable = $bdd->prepare($request);
 
 $executable->execute();
 
-while($donnees = $executable->fetch()){
-    echo '<pre>';
-    print_r($donnees);
-    echo '</pre>';
+$resultat = $executable->fetchAll();
+
+if(count($resultat) == 0)
+    echo "Pas de résultats </br>";
+
+else{
+    echo "Voici le résultat de la requête: </br>";
+
+    $i = 1;
+    foreach($resultat as $donnees){
+        echo "</br>";
+        if($i == 1){
+            echo "1er resultat: </br>";
+        }
+        else{
+            echo $i . " ème resultat: </br>";
+        }
+        echo "</br>";
+        foreach($donnees as $champ => $valeur){
+            if(is_string($champ))
+                echo $champ . " = " . $valeur . "</br>";
+        }
+        $i++;
+    }
 }
 ?>
+</br>
+<a href="page_a.html"> <input type="button" value="Faire une nouvelle requête"> </a>
 
 </div>
 </div>
