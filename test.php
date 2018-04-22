@@ -10,9 +10,15 @@ catch (Exception $e)
         die('Erreur : ' . $e->getMessage());
 }
 
-$reponse = $bdd->query('select * from Animal');
+#$_POST['taille'];
 
-$donnees = $reponse->fetch();
+$executable = $bdd->prepare(file_get_contents('e.sql'));
 
-echo $donnees['taille'];
+$executable->execute();
+
+while($donnees = $executable->fetch()){
+	echo '<pre>';
+	print_r($donnees);
+	echo '</pre>';
+}
 ?>

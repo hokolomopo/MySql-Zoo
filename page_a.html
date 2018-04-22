@@ -188,32 +188,21 @@ p{
   <form action="/action_page.php" method="post">
     <label for="table">Table</label>
     <select id="table" name="table">
-      <option value="institution">Institution</option>
-      <option value="espece">Espèce</option>
-      <option value="animal">Animal</option>
-      <option value="climat">Climat</option>
-      <option value="enclos">Enclos</option>
-      <option value="materiel">Materiel</option>
-      <option value="personne">Personne</option>
-      <option value="veterinaire">Vétérinaire</option>
-      <option value="technicien">Technicien</option>
-      <option value="intervention">Intervention</option>
-      <option value="entretien">Entretien</option>
-      <option value="provenance">Provenance</option>
+      <option value="institution" onclick="afficheContraintes('institution')">Institution</option>
+      <option value="espece" onclick="afficheContraintes('espece')">Espèce</option>
+      <option value="animal" onclick="afficheContraintes('animal')">Animal</option>
+      <option value="climat" onclick="afficheContraintes('climat')">Climat</option>
+      <option value="enclos" onclick="afficheContraintes('enclos')">Enclos</option>
+      <option value="materiel" onclick="afficheContraintes('materiel')">Materiel</option>
+      <option value="personne" onclick="afficheContraintes('personne')">Personne</option>
+      <option value="veterinaire" onclick="afficheContraintes('veterinaire')">Vétérinaire</option>
+      <option value="technicien" onclick="afficheContraintes('technicien')">Technicien</option>
+      <option value="intervention" onclick="afficheContraintes('intervention')">Intervention</option>
+      <option value="entretien" onclick="afficheContraintes('entretien')">Entretien</option>
+      <option value="provenance" onclick="afficheContraintes('provenance')">Provenance</option>
     </select>
 
-
-    <label for="fname">Contrainte</label>
-    <select id="country" name="country">
-      <option value="sans">Sans</option>
-      <option value="avec">Contient/Egal</option>
-    </select>
-
-    <label for="champ">Champ de la table</label>
-    <input type="text" id="champ" name="champ" placeholder="Champ à contraindre...">
-
-    <label for="contrainte">Contrainte</label>
-    <input type="text" id="contrainte" name="contrainte" placeholder="Contrainte...">
+    <ul class="test1" id="list1"></ul>
 
     <input type="submit" value="Soumettre">
   </form>
@@ -223,5 +212,135 @@ p{
 
 </div>
      
+<script>
+    function afficheContraintes(x) {
+        var list = document.getElementById("list1");
+        list.innerHTML = "";
+        switch (x) {
+        case "institution":
+            list.innerHTML += '<li><label for="champ">Nom</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Rue</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Code postal</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Pays</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "espece":
+            list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Nom courant</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Régime alimentaire</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "animal":
+            list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Numéro de puce</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">taille</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">sexe</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">date de naissance</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">numéro de l\'enclos</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "climat":
+            list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Nom du climat</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "enclos":
+            list.innerHTML += '<li><label for="champ">Numéro de l\'enclos</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Nom du climat</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Taille</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "materiel":
+            list.innerHTML += '<li><label for="champ">Numéro du matériel</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">État</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Local</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "personne":
+            list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Nom</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Prénom</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "veterinaire":
+            list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Numéro de license</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Spécialité</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "technicien":
+            list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "intervention":
+            list.innerHTML += '<li><label for="champ">Numéro de l\'intervention</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Date de l\'intervention</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Description</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Numéro de puce</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "entretien":
+            list.innerHTML += '<li><label for="champ">Numéro de l\'entretien</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Numéro de matériel</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Date de l\'entretien</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Numéro de l\'enclos</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+
+        case "provenance":
+            list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Numéro de puce</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            list.innerHTML += '<li><label for="champ">Nom de l\'institution</label>' + 
+                              '<input type="text" id="champ" name="champ" placeholder="Champ à contraindre..."></li>';
+            break;
+        }
+    }
+</script>
+
+
+
 </body>
 </html> 
