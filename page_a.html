@@ -202,7 +202,16 @@ p{
       <option value="Provenance" onclick="afficheContraintes('provenance')">Provenance</option>
     </select>
 
-    <ul class="test1" id="list1"></ul>
+    <ul class="test1" id="list1">
+      <li><label for="champ">Nom</label>
+          <input type="text" id="nom" name="nom" placeholder="Champ à contraindre..."></li>
+      <li><label for="champ">Rue</label>
+          <input type="text" id="rue" name="rue" placeholder="Champ à contraindre..."></li>
+      <li><label for="champ">Code postal</label>
+          <input type="text" id="code_postal" name="code_postal" placeholder="Champ à contraindre..."></li>
+      <li><label for="champ">Pays</label>
+          <input type="text" id="pays" name="pays" placeholder="Champ à contraindre..."></li>
+    </ul>
 
     <input type="submit" value="Soumettre">
   </form>
