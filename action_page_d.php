@@ -182,18 +182,28 @@ p{
 </div>
 
 <div class="main">
-  <p> Retrouver la proportion d'interventions qui ont été effectuées sur les animaux présentsdans un enclos dont le climat ne correspond pas
-   à l'un de ceux supportés par son espèce. </p>
-  <div class="form">
-  <form action="action_page_d.php" method="post">
+	<?php
 
-    <input type="submit" value="Trouver">
-  </form>
+	try
+
+	{
+	    $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
+	}
+	catch (Exception $e)
+	{
+	    die('Erreur : ' . $e->getMessage());
+	}
+
+	$executable = $bdd->prepare(file_get_contents('proportion.sql'));
+	$executable->execute();
+	echo "La proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat";
+	echo "ne correspond pas à l'un de ceux supportés par son espèce est de:</br>";
+	echo doubleval($executable->fetch()[0])*100;
+	echo "%";
+
+	?>
 </div>
 
 
-
-</div>
-     
 </body>
-</html> 
+</html>

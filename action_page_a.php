@@ -185,7 +185,6 @@ p{
 Voici le résultat de la requête: </br>
 <?php
 
-
 $request = 'SELECT * FROM ' . $_POST['table'];
 $first = true;
 foreach($_POST as $cle => $valeur){

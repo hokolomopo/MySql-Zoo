@@ -29,4 +29,4 @@ natural join
         where Climat.nom_scientifique = t3.nom_scientifique
           and Climat.nom_climat = t5.nom_climat
     )
-) as t2
+) as t2;

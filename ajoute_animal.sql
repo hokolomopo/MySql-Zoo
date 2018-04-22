@@ -1,0 +1,1 @@
+Insert into Animal Values(Ailuropoda melanoleuca, 200, 156, M, 02/04/2018, 2, NOW());
