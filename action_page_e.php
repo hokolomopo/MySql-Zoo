@@ -207,9 +207,12 @@ try
 }
 catch (Exception $e)
 {
-    die('Erreur : ' . $e->getMessage());
+    fwrite(STDERR, "Une erreur inattendue est survenue lors de la connexion à la base de donnée" . $e->getMessage());
+    exit(1);
 }
 
+echo $_POST['avertissement_confirmé'];
+echo "</br>";
 echo $_POST['nom_scientifique'];
 echo "</br>";
 echo $_POST['n_puce'];
@@ -223,37 +226,128 @@ echo "</br>";
 echo $_POST['n_enclos'];
 echo "</br>";
 
-if($_POST['n_puce'] <= 0) {
-	echo "Le numéro de puce ne peut pas être négatif.";
+//vérifie les conditions d'intégrité des valeurs entrées
+if($_POST['n_puce'] == "" || $_POST['n_puce'] < 0 || $_POST['n_puce'] > 65535) {
+	echo "Le numéro de puce doit être compris dans l'intervalle [0 ; 65 535]";
 	return;
 }
 
-if($_POST['taille'] <= 0) {
-	echo "La taille ne peut pas être négative.";
+if($_POST['taille'] == "" || $_POST['taille'] <= 0 || $_POST['taille'] > 2147483647) {
+	echo "La taille doit être comprise dans l'intervalle [1 ; 2 147 483 647] cm.";
 	return;
 }
 
 if($_POST['sexe'] != 'M' && $_POST['sexe'] != 'F') {
-	echo "Le sexe n'est pas valide.";
+	echo "Le sexe n'est pas valide, il doit être indiqué par M ou F.";
 	return;
 }
 
-if($_POST['n_enclos'] <= 0) {
-	echo "Le numéro de l'enclos ne peut pas être négatif.";
+$date = $_POST['date_naissance'];
+$annee = substr($date, 0, 4);
+$mois = substr($date, 5, 2);
+$jour = substr($date, 8, 2);
+if($annee == false || $annee < 1900 || $annee > 2018 || $mois == false || $mois <= 0
+|| $mois > 12 || $jour == false || $jour <= 0 || $jour > 31) {
+	echo "La date doit être fournie au format aaaa*mm*jj où les * peuvent être remplacées par n'importe quel caractère,</br>";
+	echo "et correspondre à une date valide dans l'intervalle [1900/01/01 ; 2018-12-31]";
 	return;
 }
 
-$executable = $bdd->prepare(file_get_contents('vérifie_climat.sql'));
-$executable->execute(array(':n_enclos' => $_POST['n_enclos'], ':nom_scientifique' => $_POST['nom_scientifique']));
+//vérifie que les références vers d'autres tables sont correctes
+$executable = $bdd->prepare(file_get_contents('e_vérifie_nom_scientifique.sql'));
+$executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique']));
 $fetch_résultat = $executable->fetch();
 
-$bon_climat = $fetch_résultat['bon_climat'];
-if ($bon_climat == 0) {
-	echo "L'enclos que vous avez choisi n'est pas adapté pour cette espèce";
+$bon_nom = $fetch_résultat['bon_nom'];
+if ($bon_nom == 0) {
+	echo "L'espèce doit appartenir à la base de donnée.";
+	return;
+}
+
+$executable = $bdd->prepare(file_get_contents('e_vérifie_enclos.sql'));
+$executable->execute(array(':n_enclos' => $_POST['n_enclos']));
+$fetch_résultat = $executable->fetch();
+
+$bon_enclos = $fetch_résultat['bon_enclos'];
+if ($bon_enclos == 0) {
+	echo "L'enclos doit exister.";
+	return;
+}
+
+$executable = $bdd->prepare(file_get_contents('e_animal_existe_déjà.sql'));
+$executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce']));
+$fetch_résultat = $executable->fetch();
+
+$bon_animal = $fetch_résultat['bon_animal'];
+if ($bon_animal != 0) {
+	echo "Cet animal existe déjà, veuillez choisir un autre numéro de puce.</br>";
+	echo "Voici la liste, triée dans l'ordre croissant, des numéros de puce déjà utilisés pour l'espèce ";
+	echo $_POST['nom_scientifique'];
+	echo ":</br>";
+	$executable = $bdd->prepare(file_get_contents('e_n_puce.sql'));
+	$executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique']));
+
+	$fetch_résultat = $executable->fetch();
+	while($fetch_résultat) {
+		echo $fetch_résultat['n_puce'];
+		echo "</br>";
+		$fetch_résultat = $executable->fetch();
+	}
+	return;
 }
 
 
-#$executable = $bdd->prepare(file_get_contents('vérifie_institution.sql'));
+if($_POST['avertissement_confirmé'] == "faux") {
+	//Avertissement si l'enclos n'est pas adapté
+	$executable = $bdd->prepare(file_get_contents('e_vérifie_climat.sql'));
+	$executable->execute(array(':n_enclos' => $_POST['n_enclos'], ':nom_scientifique' => $_POST['nom_scientifique']));
+	$fetch_résultat = $executable->fetch();
+
+	$bon_climat = $fetch_résultat['bon_climat'];
+	if ($bon_climat == 0) {
+		$nom_tableau = explode(" ", $_POST['nom_scientifique']);
+		echo "L'enclos que vous avez choisi n'est pas adapté pour cette espèce, voulez-vous quand même ajouter l'animal?</br>";
+		echo "Voici un récapitulatif des informations que vous avez entrées: </br></br>";
+
+		echo "
+		<div style=\"width: 60%;\">
+			<form action=\"action_page_e.php\" method=\"post\">
+
+			<label for=\"nom_scientifique\">Nom scientifique</label>
+			<input type=\"text\" id=\"nom_scientifique\" name=\"nom_scientifique\"
+			       value=\"".$_POST['nom_scientifique']."\" readonly=\"true\">
+
+			<label for=\"n_puce\">Numéro de puce</label>
+			<input type=\"text\" id=\"n_puce\" name=\"n_puce\"
+			       value=".$_POST['n_puce']." readonly=\"true\">
+
+			<label for=\"taille\">Taille</label>
+			<input type=\"text\" id=\"taille\" name=\"taille\"
+			       value=".$_POST['taille']." readonly=\"true\">
+
+			<label for=\"sexe\">Sexe</label>
+			<input type=\"text\" id=\"sexe\" name=\"sexe\"
+			       value=".$_POST['sexe']." readonly=\"true\">
+
+			<label for=\"date_naissance\">Date de naissance</label>
+			<input type=\"text\" id=\"date_naissance\" name=\"date_naissance\"
+			       value=".$_POST['date_naissance']." readonly=\"true\">
+
+			<label for=\"n_enclos\">Numéro de l'enclos</label>
+			<input type=\"text\" id=\"n_enclos\" name=\"n_enclos\"
+			       value=".$_POST['n_enclos']." readonly=\"true\">
+
+			<input type=\"text\" id=\"avertissement_confirmé\" name=\"avertissement_confirmé\"
+			       value=\"vrai\" readonly=\"true\" style=\"display: none\">
+
+			<input type=\"submit\" value=\"Ajouter quand même\">
+		</div>
+		";
+		return;
+	}
+}
+
+#$executable = $bdd->prepare(file_get_contents('e_vérifie_institution.sql'));
 #$executable->execute(array('nom_institution' => $_POST['nom']));
 #$bonne_institution = $executable->fetch();
 #if ($bonne_institution == 0) {
@@ -261,11 +355,12 @@ if ($bon_climat == 0) {
 #	return;
 #}
 
-$executable = $bdd->prepare(file_get_contents('ajoute_animal.sql'));
+$executable = $bdd->prepare(file_get_contents('e_ajoute_animal.sql'));
 $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
 						   ':taille' => $_POST['taille'], ':sexe' => $_POST['sexe'],
 						   ':date_naissance' => $_POST['date_naissance'], ':n_enclos' => $_POST['n_enclos']));
 $executable->fetchAll();
+
 ?>
 </div>
 </body>
