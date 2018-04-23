@@ -128,6 +128,22 @@ input[type=submit]:hover {
     background-color: #45a049;
 }
 
+input[type=button] {
+    display: block;
+    width: 50%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+a{
+    text-decoration: none;
+}
+
 .form {
     position: :absolute;
     left : 100px;
@@ -194,7 +210,7 @@ p{
 	    die('Erreur : ' . $e->getMessage());
 	}
 
-	$executable = $bdd->prepare(file_get_contents('proportion.sql'));
+	$executable = $bdd->prepare(file_get_contents('d_proportion.sql'));
 	$executable->execute();
 	echo "La proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat";
 	echo "ne correspond pas à l'un de ceux supportés par son espèce est de:</br>";
@@ -202,8 +218,7 @@ p{
 	echo "%";
 
 	?>
+    <a href="page_d.html"> <input type="button" value="Effectuer de nouveau la requête (ça pourrait avoir changer!)"> </a>
 </div>
-
-
 </body>
 </html>

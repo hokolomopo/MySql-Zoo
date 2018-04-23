@@ -191,7 +191,7 @@ p{
 
   <p> Vous pouvez ici trier les animaux du parc par le nombre de vétérinaires différents qui sont intervenus au moins une fois sur eux. </p>
   <div class="form">
-  <form action="/action_page.php" method="post">
+  <form action="action_page_b.php" method="post">
 
     <input type="submit" value="Trier">
   </form>

@@ -1,9 +1,3 @@
-<?php 
-
-session_start();
-
-if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
-    echo <<< EOT
 <!DOCTYPE html>
 <html>
 <head>
@@ -134,6 +128,22 @@ input[type=submit]:hover {
     background-color: #45a049;
 }
 
+input[type=button] {
+    display: block;
+    width: 50%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+a{
+    text-decoration: none;
+}
+
 .form {
     position: :absolute;
     left : 100px;
@@ -188,25 +198,36 @@ p{
 </div>
 
 <div class="main">
-  <p> Vous pouvez ici retrouver les techniciens qui ont travaillé dans l'ensemble des enclos du parc animalier. </p>
-  <div class="form"  method="post">
-  <form action="action_page_c.php">
+    <?php
 
-    <input type="submit" value="Trouver">
-  </form>
+    try
+
+    {
+        $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
+    }
+    catch (Exception $e)
+    {
+        die('Erreur : ' . $e->getMessage());
+    }
+
+    $executable = $bdd->prepare(file_get_contents('b_tri_animaux.sql'));
+    $executable->execute();
+    echo "Voici la liste, triée par le nombre de vétérinaires différents étant intervenus ";
+    echo "au moins une fois sur eux, des animaux:</br>";
+    echo "Nom scientifique / Numéro de puce / Taille / Sexe / date de naissance / Numéro d'enclos";
+    echo " / nombre de vétérinaires différents étant intervenus sur lui:</br></br>";
+
+    $fetch_resultat = $executable->fetch();
+    while ($fetch_resultat) {
+        for ($x = 0; $x < count($fetch_resultat)/2; $x++) { //division par 2 car les éléments sont duppliqués dans le fetch().
+            echo $fetch_resultat[$x] . "\t";
+        }
+        echo "</br>";
+        $fetch_resultat = $executable->fetch();
+    }
+
+    ?>
+    <a href="page_b.html"> <input type="button" value="Effectuer de nouveau la requête (ça pourrait avoir changer!)"> </a>
 </div>
-
-
-
-</div>
-     
 </body>
-</html> 
-EOT;
-}
-
-else{
-    header('Location: connexion.php');
-}
-
-?>
+</html>

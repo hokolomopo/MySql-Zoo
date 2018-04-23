@@ -188,8 +188,7 @@ p{
 </div>
 
 <div class="main">
-  <p> Retrouver la proportion d'interventions qui ont été effectuées sur les animaux présentsdans un enclos dont le climat ne correspond pas
-   à l'un de ceux supportés par son espèce. </p>
+  <p> Cette page permet de calculer la proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat ne correspond pas à l'un de ceux supportés par leur espèce. </p>
   <div class="form">
   <form action="action_page_d.php" method="post">
 

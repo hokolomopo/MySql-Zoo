@@ -215,26 +215,17 @@ catch (Exception $e)
 //Les variables sont set même si l'utilisateur n'a rien n'écrit dans le formulaire, c'est donc juste une protection contre les tentatives d'attaque
 if (!isset($_POST['avertissement_confirmé']) || !isset($_POST['nom_scientifique']) || !isset($_POST['n_puce']) ||
     !isset($_POST['taille']) || !isset($_POST['sexe']) || !isset($_POST['date_naissance']) || !isset($_POST['n_enclos']) ||
-    /*!isset($_POST['institutionCheck']) ||*/ !isset($_POST['nom']) || !isset($_POST['rue']) || !isset($_POST['code_postal']) ||
+    !isset($_POST['nom']) || !isset($_POST['rue']) || !isset($_POST['code_postal']) ||
     !isset($_POST['pays'])) {
     echo "Erreur inattendue relative à la complétion des champs";
     return;
 }
 
-echo $_POST['avertissement_confirmé'];
-echo "</br>";
-echo $_POST['nom_scientifique'];
-echo "</br>";
-echo $_POST['n_puce'];
-echo "</br>";
-echo $_POST['taille'];
-echo "</br>";
-echo $_POST['sexe'];
-echo "</br>";
-echo $_POST['date_naissance'];
-echo "</br>";
-echo $_POST['n_enclos'];
-echo "</br>";
+//Empêche l'utilisateur de placer des balises html et donc d'exécuter du javascript
+foreach ($_POST as $key => $value) {
+    $key = htmlspecialchars($key);
+    $value = htmlspecialchars($value);
+}
 
 //vérifie les conditions d'intégrité des valeurs entrées
 if($_POST['n_puce'] == "" || $_POST['n_puce'] < 0 || $_POST['n_puce'] > 65535) {
@@ -326,53 +317,64 @@ if($_POST['avertissement_confirmé'] == "faux") {
 		echo "L'enclos que vous avez choisi n'est pas adapté pour cette espèce, voulez-vous quand même ajouter l'animal?</br>";
 		echo "Voici un récapitulatif des informations que vous avez entrées: </br></br>";
 
+        if (isset($_POST['institutionCheck'])) {
+            $checked = "checked=\"true\"";
+        } else {
+            $checked = "";
+        }
+
 		echo "
 		<div style=\"width: 60%;\">
 			<form action=\"action_page_e.php\" method=\"post\">
 
-			<label for=\"nom_scientifique\">Nom scientifique</label>
-			<input type=\"text\" id=\"nom_scientifique\" name=\"nom_scientifique\"
-			       value=\"".$_POST['nom_scientifique']."\" readonly=\"true\">
+    			<label for=\"nom_scientifique\">Nom scientifique</label>
+    			<input type=\"text\" id=\"nom_scientifique\" name=\"nom_scientifique\"
+    			       value=\"".$_POST['nom_scientifique']."\" readonly=\"true\">
 
-			<label for=\"n_puce\">Numéro de puce</label>
-			<input type=\"text\" id=\"n_puce\" name=\"n_puce\"
-			       value=\"".$_POST['n_puce']."\" readonly=\"true\">
+    			<label for=\"n_puce\">Numéro de puce</label>
+    			<input type=\"text\" id=\"n_puce\" name=\"n_puce\"
+    			       value=\"".$_POST['n_puce']."\" readonly=\"true\">
 
-			<label for=\"taille\">Taille</label>
-			<input type=\"text\" id=\"taille\" name=\"taille\"
-			       value=\"".$_POST['taille']."\" readonly=\"true\">
+    			<label for=\"taille\">Taille</label>
+    			<input type=\"text\" id=\"taille\" name=\"taille\"
+    			       value=\"".$_POST['taille']."\" readonly=\"true\">
 
-			<label for=\"sexe\">Sexe</label>
-			<input type=\"text\" id=\"sexe\" name=\"sexe\"
-			       value=\"".$_POST['sexe']."\" readonly=\"true\">
+    			<label for=\"sexe\">Sexe</label>
+    			<input type=\"text\" id=\"sexe\" name=\"sexe\"
+    			       value=\"".$_POST['sexe']."\" readonly=\"true\">
 
-			<label for=\"date_naissance\">Date de naissance</label>
-			<input type=\"text\" id=\"date_naissance\" name=\"date_naissance\"
-			       value=\"".$_POST['date_naissance']."\" readonly=\"true\">
+    			<label for=\"date_naissance\">Date de naissance</label>
+    			<input type=\"text\" id=\"date_naissance\" name=\"date_naissance\"
+    			       value=\"".$_POST['date_naissance']."\" readonly=\"true\">
 
-			<label for=\"n_enclos\">Numéro de l'enclos</label>
-			<input type=\"text\" id=\"n_enclos\" name=\"n_enclos\"
-			       value=\"".$_POST['n_enclos']."\" readonly=\"true\">
+    			<label for=\"n_enclos\">Numéro de l'enclos</label>
+    			<input type=\"text\" id=\"n_enclos\" name=\"n_enclos\"
+    			       value=\"".$_POST['n_enclos']."\" readonly=\"true\">
 
-			<input type=\"hidden\" id=\"avertissement_confirmé\" name=\"avertissement_confirmé\" value=\"vrai\">
+    			<input type=\"hidden\" id=\"avertissement_confirmé\" name=\"avertissement_confirmé\" value=\"vrai\">
 
-            <label for=\"nom\">Nom</label>
-            <input type=\"text\" id=\"nom\" name=\"nom\"
-                   value=\"".$_POST['nom']."\" readonly=\"true\">
+                Nouvelle institution : 
+                <input type=\"checkbox\" id=\"institutionCheck\" name=\"institutionCheck\" value=\"true\"
+                       onclick=\"return false;\" ".$checked."></br>
 
-            <label for=\"rue\">Rue</label>
-            <input type=\"text\" id=\"rue\" name=\"rue\"
-                   value=\"".$_POST['rue']."\" readonly=\"true\">
+                <label for=\"nom\">Nom</label>
+                <input type=\"text\" id=\"nom\" name=\"nom\"
+                       value=\"".$_POST['nom']."\" readonly=\"true\">
 
-            <label for=\"code_postal\">Code postal</label>
-            <input type=\"text\" id=\"code_postal\" name=\"code_postal\"
-                   value=\"".$_POST['code_postal']."\" readonly=\"true\">
+                <label for=\"rue\">Rue</label>
+                <input type=\"text\" id=\"rue\" name=\"rue\"
+                       value=\"".$_POST['rue']."\" readonly=\"true\">
 
-            <label for=\"pays\">Pays</label>
-            <input type=\"text\" id=\"pays\" name=\"pays\"
-                   value=\"".$_POST['pays']."\" readonly=\"true\">
+                <label for=\"code_postal\">Code postal</label>
+                <input type=\"text\" id=\"code_postal\" name=\"code_postal\"
+                       value=\"".$_POST['code_postal']."\" readonly=\"true\">
 
-			<input type=\"submit\" value=\"Ajouter quand même\">
+                <label for=\"pays\">Pays</label>
+                <input type=\"text\" id=\"pays\" name=\"pays\"
+                       value=\"".$_POST['pays']."\" readonly=\"true\">
+
+    			<input type=\"submit\" value=\"Ajouter quand même\">
+            </form>
 		</div>
 		";
 		echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
@@ -388,7 +390,7 @@ $executable->execute(array('nom' => $_POST['nom']));
 $fetch_résultat = $executable->fetch();
 
 //Il faut ajouter une nouvelle institution
-if (true/*-------------------------------------------------------CHECKBOX CHECKED--------------------------------------------*/) {
+if (isset($_POST['institutionCheck']) == 1) {
     if($_POST['nom'] == "") {
         echo "Le nom de l'institution doit contenir au moins une lettre.</br>";
         echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
@@ -424,7 +426,6 @@ if (true/*-------------------------------------------------------CHECKBOX CHECKE
             echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
             return;
         }
-        return;
     }
 } else {
     if($_POST['nom'] != "") {
@@ -470,6 +471,14 @@ if ($ajouter_provenance) {
         echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue </br>";
         echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
         return;
+    }
+}
+
+echo "L'animal a été ajouté avec succès !</br>";
+echo "Voici un récapitulatif :</br>";
+foreach ($_POST as $key => $value) {
+    if ($value != "" && $key != "avertissement_confirmé") {
+        echo $value . "</br>";
     }
 }
 
