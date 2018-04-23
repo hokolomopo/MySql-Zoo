@@ -264,7 +264,7 @@ foreach($_POST as $cle => $valeur){
 
                 case 'datetime':
 
-                    $format = '%Y-%m-%d %H:%M:%S';
+                    $format = '%d/%m/%Y %H:%M:%S';
                     if(! strptime($valeur, $format))
                         exit("le format de " . $cle . " ne correspond pas au format attendu par le serveur");
 
