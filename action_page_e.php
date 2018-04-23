@@ -204,11 +204,21 @@ try
 
 {
     $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 }
 catch (Exception $e)
 {
     fwrite(STDERR, "Une erreur inattendue est survenue lors de la connexion à la base de donnée" . $e->getMessage());
     exit(1);
+}
+
+//Les variables sont set même si l'utilisateur n'a rien n'écrit dans le formulaire, c'est donc juste une protection contre les tentatives d'attaque
+if (!isset($_POST['avertissement_confirmé']) || !isset($_POST['nom_scientifique']) || !isset($_POST['n_puce']) ||
+    !isset($_POST['taille']) || !isset($_POST['sexe']) || !isset($_POST['date_naissance']) || !isset($_POST['n_enclos']) ||
+    /*!isset($_POST['institutionCheck']) ||*/ !isset($_POST['nom']) || !isset($_POST['rue']) || !isset($_POST['code_postal']) ||
+    !isset($_POST['pays'])) {
+    echo "Erreur inattendue relative à la complétion des champs";
+    return;
 }
 
 echo $_POST['avertissement_confirmé'];
@@ -256,6 +266,7 @@ if($annee == false || $annee < 1900 || $annee > 2018 || $mois == false || $mois 
 	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
+$date = $jour . "/" . $mois ."/" . $annee;
 
 //vérifie que les références vers d'autres tables sont correctes
 $executable = $bdd->prepare(file_get_contents('e_vérifie_nom_scientifique.sql'));
@@ -312,7 +323,6 @@ if($_POST['avertissement_confirmé'] == "faux") {
 
 	$bon_climat = $fetch_résultat['bon_climat'];
 	if ($bon_climat == 0) {
-		$nom_tableau = explode(" ", $_POST['nom_scientifique']);
 		echo "L'enclos que vous avez choisi n'est pas adapté pour cette espèce, voulez-vous quand même ajouter l'animal?</br>";
 		echo "Voici un récapitulatif des informations que vous avez entrées: </br></br>";
 
@@ -326,26 +336,41 @@ if($_POST['avertissement_confirmé'] == "faux") {
 
 			<label for=\"n_puce\">Numéro de puce</label>
 			<input type=\"text\" id=\"n_puce\" name=\"n_puce\"
-			       value=".$_POST['n_puce']." readonly=\"true\">
+			       value=\"".$_POST['n_puce']."\" readonly=\"true\">
 
 			<label for=\"taille\">Taille</label>
 			<input type=\"text\" id=\"taille\" name=\"taille\"
-			       value=".$_POST['taille']." readonly=\"true\">
+			       value=\"".$_POST['taille']."\" readonly=\"true\">
 
 			<label for=\"sexe\">Sexe</label>
 			<input type=\"text\" id=\"sexe\" name=\"sexe\"
-			       value=".$_POST['sexe']." readonly=\"true\">
+			       value=\"".$_POST['sexe']."\" readonly=\"true\">
 
 			<label for=\"date_naissance\">Date de naissance</label>
 			<input type=\"text\" id=\"date_naissance\" name=\"date_naissance\"
-			       value=".$_POST['date_naissance']." readonly=\"true\">
+			       value=\"".$_POST['date_naissance']."\" readonly=\"true\">
 
 			<label for=\"n_enclos\">Numéro de l'enclos</label>
 			<input type=\"text\" id=\"n_enclos\" name=\"n_enclos\"
-			       value=".$_POST['n_enclos']." readonly=\"true\">
+			       value=\"".$_POST['n_enclos']."\" readonly=\"true\">
 
-			<input type=\"text\" id=\"avertissement_confirmé\" name=\"avertissement_confirmé\"
-			       value=\"vrai\" readonly=\"true\" style=\"display: none\">
+			<input type=\"hidden\" id=\"avertissement_confirmé\" name=\"avertissement_confirmé\" value=\"vrai\">
+
+            <label for=\"nom\">Nom</label>
+            <input type=\"text\" id=\"nom\" name=\"nom\"
+                   value=\"".$_POST['nom']."\" readonly=\"true\">
+
+            <label for=\"rue\">Rue</label>
+            <input type=\"text\" id=\"rue\" name=\"rue\"
+                   value=\"".$_POST['rue']."\" readonly=\"true\">
+
+            <label for=\"code_postal\">Code postal</label>
+            <input type=\"text\" id=\"code_postal\" name=\"code_postal\"
+                   value=\"".$_POST['code_postal']."\" readonly=\"true\">
+
+            <label for=\"pays\">Pays</label>
+            <input type=\"text\" id=\"pays\" name=\"pays\"
+                   value=\"".$_POST['pays']."\" readonly=\"true\">
 
 			<input type=\"submit\" value=\"Ajouter quand même\">
 		</div>
@@ -355,19 +380,98 @@ if($_POST['avertissement_confirmé'] == "faux") {
 	}
 }
 
-#$executable = $bdd->prepare(file_get_contents('e_vérifie_institution.sql'));
-#$executable->execute(array('nom_institution' => $_POST['nom']));
-#$bonne_institution = $executable->fetch();
-#if ($bonne_institution == 0) {
-#	echo "L'institution que vous avez choisi n'existe pas, veuillez entrer ses coordonnées.";
-#	return;
-#}
+$ajouter_institution = false;
+$ajouter_provenance = false;
 
-$executable = $bdd->prepare(file_get_contents('e_ajoute_animal.sql'));
-$executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
-						   ':taille' => $_POST['taille'], ':sexe' => $_POST['sexe'],
-						   ':date_naissance' => $_POST['date_naissance'], ':n_enclos' => $_POST['n_enclos']));
-$executable->fetchAll();
+$executable = $bdd->prepare(file_get_contents('e_institution_existe_déjà.sql'));
+$executable->execute(array('nom' => $_POST['nom']));
+$fetch_résultat = $executable->fetch();
+
+//Il faut ajouter une nouvelle institution
+if (true/*-------------------------------------------------------CHECKBOX CHECKED--------------------------------------------*/) {
+    if($_POST['nom'] == "") {
+        echo "Le nom de l'institution doit contenir au moins une lettre.</br>";
+        echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        return;
+    }
+
+    if ($fetch_résultat['existe_déjà'] == 0) {
+        if ($_POST['rue'] == "") {
+            echo "La rue de l'institution est manquante";
+            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            return;
+        }
+        if ($_POST['code_postal'] == "" || $_POST['code_postal'] <= 0) {
+            echo "Le code postal ne peut pas être négatif ou nul";
+            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            return;
+        }
+        if($_POST['pays'] == "") {
+            echo "Le pays de l'institution est manquant";
+            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            return;
+        }
+        $ajouter_institution = true;
+        $ajouter_provenance = true;
+
+    } else {
+        if ($fetch_résultat['rue'] == $_POST['rue'] && $fetch_résultat['code_postal'] == $_POST['code_postal'] &&
+            $fetch_résultat['pays'] == $_POST['pays']) {
+            echo "Avertissement: l'institution que vous avez entrée existait déjà, elle n'a donc pas été ajoutée</br>";
+            $ajouter_provenance = true;
+        } else {
+            echo "Une autre institution avec le même nom existe déjà, impossible d'ajouter cette institution";
+            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            return;
+        }
+        return;
+    }
+} else {
+    if($_POST['nom'] != "") {
+        if($fetch_résultat['existe_déjà'] == 0) {
+            echo "L'institution de provenance n'existe pas";
+            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            return;
+        } else {
+            $ajouter_provenance = true;
+        }
+    }
+}
+
+try {
+    $executable = $bdd->prepare(file_get_contents('e_ajoute_animal.sql'));
+    $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
+    						   ':taille' => $_POST['taille'], ':sexe' => $_POST['sexe'],
+    						   ':date_naissance' => $date, ':n_enclos' => $_POST['n_enclos']));
+} catch (Exception $e) {
+    echo "L'ajout de l'animal n'a pas fonctionné pour une raison inconnue</br>.";
+    echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+    return;
+}
+
+if ($ajouter_institution) {
+    try {
+        $executable = $bdd->prepare(file_get_contents('e_ajoute_institution.sql'));
+        $executable->execute(array(':nom' => $_POST['nom'], ':rue' => $_POST['rue'], ':code_postal' => $_POST['code_postal'],
+                                   ':pays' => $_POST['pays']));
+    } catch (Exception $e) {
+        echo "L'ajout de l'institution n'a pas fonctionné pour une raison inconnue </br>";
+        echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        return;
+    }
+}
+
+if ($ajouter_provenance) {
+    try {
+        $executable = $bdd->prepare(file_get_contents('e_ajoute_provenance.sql'));
+        $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
+                                   ':nom_institution' => $_POST['nom']));
+    } catch (Exception $e) {
+        echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue </br>";
+        echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        return;
+    }
+}
 
 ?>
 <a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>
