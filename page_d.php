@@ -1,3 +1,9 @@
+<?php 
+
+session_start();
+
+if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
+    echo <<< EOT
 <!DOCTYPE html>
 <html>
 <head>
@@ -182,12 +188,12 @@ p{
 </div>
 
 <div class="main">
-
-  <p> Vous pouvez ici trier les animaux du parc par le nombre de vétérinaires différents qui sont intervenus au moins une fois sur eux. </p>
+  <p> Retrouver la proportion d'interventions qui ont été effectuées sur les animaux présentsdans un enclos dont le climat ne correspond pas
+   à l'un de ceux supportés par son espèce. </p>
   <div class="form">
-  <form action="/action_page.php" method="post">
+  <form action="action_page_d.php" method="post">
 
-    <input type="submit" value="Trier">
+    <input type="submit" value="Trouver">
   </form>
 </div>
 
@@ -197,3 +203,13 @@ p{
      
 </body>
 </html> 
+EOT;
+}
+
+else{
+    header('Location: connexion.php');
+}
+
+?>
+
+

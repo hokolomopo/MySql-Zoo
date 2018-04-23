@@ -1,3 +1,9 @@
+<?php 
+
+session_start();
+
+if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
+    echo <<< EOT
 <!DOCTYPE html>
 <html>
 <head>
@@ -349,7 +355,18 @@ p{
     }
 </script>
 
-
-
 </body>
 </html> 
+EOT;
+}
+
+else{
+    header('Location: connexion.php');
+}
+
+?>
+
+
+
+
+

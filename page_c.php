@@ -1,3 +1,9 @@
+<?php 
+
+session_start();
+
+if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
+    echo <<< EOT
 <!DOCTYPE html>
 <html>
 <head>
@@ -182,10 +188,9 @@ p{
 </div>
 
 <div class="main">
-  <p> Retrouver la proportion d'interventions qui ont été effectuées sur les animaux présentsdans un enclos dont le climat ne correspond pas
-   à l'un de ceux supportés par son espèce. </p>
-  <div class="form">
-  <form action="action_page_d.php" method="post">
+  <p> Vous pouvez ici retrouver les techniciens qui ont travaillé dans l'ensemble des enclos du parc animalier. </p>
+  <div class="form"  method="post">
+  <form action="/action_page.php">
 
     <input type="submit" value="Trouver">
   </form>
@@ -197,3 +202,11 @@ p{
      
 </body>
 </html> 
+EOT;
+}
+
+else{
+    header('Location: connexion.php');
+}
+
+?>
