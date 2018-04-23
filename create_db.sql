@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS Espece (
     regime_alimentaire VARCHAR(40) NOT NULL,
     PRIMARY KEY (nom_scientifique)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Climat(
  	nom_scientifique VARCHAR(40) NOT NULL,
@@ -16,7 +15,6 @@ CREATE TABLE IF NOT EXISTS Climat(
  	FOREIGN KEY (nom_scientifique)             
         REFERENCES Espece(nom_scientifique)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Enclos(
  	n_enclos SMALLINT NOT NULL AUTO_INCREMENT,
@@ -24,7 +22,6 @@ CREATE TABLE IF NOT EXISTS Enclos(
  	taille SMALLINT NOT NULL,
  	PRIMARY KEY (n_enclos)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Animal (
 	nom_scientifique VARCHAR(40) NOT NULL,
@@ -39,7 +36,6 @@ CREATE TABLE IF NOT EXISTS Animal (
     FOREIGN KEY (n_enclos)             
         REFERENCES Enclos(n_enclos)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Institution(
 	nom VARCHAR(40) NOT NULL,
@@ -48,7 +44,6 @@ CREATE TABLE IF NOT EXISTS Institution(
 	pays VARCHAR(40) NOT NULL,
 	PRIMARY KEY (nom)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Materiel(
 	n_materiel SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -56,7 +51,6 @@ CREATE TABLE IF NOT EXISTS Materiel(
  	local VARCHAR(10) NOT NULL,
  	PRIMARY KEY (n_materiel)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Personnel(
 	n_registre INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -64,7 +58,6 @@ CREATE TABLE IF NOT EXISTS Personnel(
  	prenom VARCHAR(40) NOT NULL,
  	PRIMARY KEY (n_registre)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Technicien(
 	n_registre INT UNSIGNED NOT NULL,
@@ -72,7 +65,6 @@ CREATE TABLE IF NOT EXISTS Technicien(
  	FOREIGN KEY (n_registre)             
         REFERENCES Personnel(n_registre)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Veterinaire(
 	n_registre INT UNSIGNED NOT NULL,
@@ -82,7 +74,6 @@ CREATE TABLE IF NOT EXISTS Veterinaire(
  	FOREIGN KEY (n_registre)             
         REFERENCES Personnel(n_registre)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Entretien (
 	n_entretien INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -98,7 +89,6 @@ CREATE TABLE IF NOT EXISTS Entretien (
     FOREIGN KEY (n_registre)
     	REFERENCES Technicien(n_registre)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Provenance(
  	nom_scientifique VARCHAR(40) NOT NULL,
@@ -112,7 +102,6 @@ CREATE TABLE IF NOT EXISTS Provenance(
    	FOREIGN KEY (nom_institution)
     	REFERENCES Institution(nom)
 )ENGINE=INNODB;
-SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Intervention(
 	n_intervention INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -129,4 +118,3 @@ CREATE TABLE IF NOT EXISTS Intervention(
    	FOREIGN KEY (n_registre)
     	REFERENCES Veterinaire(n_registre)
 )ENGINE=INNODB;
-SHOW TABLES;

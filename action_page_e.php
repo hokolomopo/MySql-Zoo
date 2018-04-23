@@ -185,7 +185,7 @@ p{
                     <a href="page_d.html" class="link2">Question d</a>
                 </li>
                 <li class="hoverable2">
-                    <a href="page_e.html" class="link2">Question e</a>
+                    <a href="page_e.php" class="link2">Question e</a>
                 </li>
 
             </ul>   
@@ -230,19 +230,19 @@ foreach ($_POST as $key => $value) {
 //vérifie les conditions d'intégrité des valeurs entrées
 if($_POST['n_puce'] == "" || $_POST['n_puce'] < 0 || $_POST['n_puce'] > 65535) {
 	echo "Le numéro de puce doit être compris dans l'intervalle [0 ; 65 535]";
-	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+	echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
 if($_POST['taille'] == "" || $_POST['taille'] <= 0 || $_POST['taille'] > 2147483647) {
 	echo "La taille doit être comprise dans l'intervalle [1 ; 2 147 483 647] cm.";
-	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+	echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
 if($_POST['sexe'] != 'M' && $_POST['sexe'] != 'F') {
 	echo "Le sexe n'est pas valide, il doit être indiqué par M ou F.";
-	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+	echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -254,7 +254,7 @@ if($annee == false || $annee < 1900 || $annee > 2018 || $mois == false || $mois 
 || $mois > 12 || $jour == false || $jour <= 0 || $jour > 31) {
 	echo "La date doit être fournie au format aaaa*mm*jj où les * peuvent être remplacées par n'importe quel caractère,</br>";
 	echo "et correspondre à une date valide dans l'intervalle [1900/01/01 ; 2018-12-31]";
-	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+	echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 $date = $jour . "/" . $mois ."/" . $annee;
@@ -267,7 +267,7 @@ $fetch_résultat = $executable->fetch();
 $bon_nom = $fetch_résultat['bon_nom'];
 if ($bon_nom == 0) {
 	echo "L'espèce doit appartenir à la base de donnée.";
-	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+	echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -278,7 +278,7 @@ $fetch_résultat = $executable->fetch();
 $bon_enclos = $fetch_résultat['bon_enclos'];
 if ($bon_enclos == 0) {
 	echo "L'enclos doit exister.";
-	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+	echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -301,7 +301,7 @@ if ($bon_animal != 0) {
 		echo "</br>";
 		$fetch_résultat = $executable->fetch();
 	}
-	echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+	echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
 	return;
 }
 
@@ -377,7 +377,7 @@ if($_POST['avertissement_confirmé'] == "faux") {
             </form>
 		</div>
 		";
-		echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+		echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
 		return;
 	}
 }
@@ -393,24 +393,24 @@ $fetch_résultat = $executable->fetch();
 if (isset($_POST['institutionCheck']) == 1) {
     if($_POST['nom'] == "") {
         echo "Le nom de l'institution doit contenir au moins une lettre.</br>";
-        echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
         return;
     }
 
     if ($fetch_résultat['existe_déjà'] == 0) {
         if ($_POST['rue'] == "") {
             echo "La rue de l'institution est manquante";
-            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
             return;
         }
         if ($_POST['code_postal'] == "" || $_POST['code_postal'] <= 0) {
             echo "Le code postal ne peut pas être négatif ou nul";
-            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
             return;
         }
         if($_POST['pays'] == "") {
             echo "Le pays de l'institution est manquant";
-            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
             return;
         }
         $ajouter_institution = true;
@@ -423,7 +423,7 @@ if (isset($_POST['institutionCheck']) == 1) {
             $ajouter_provenance = true;
         } else {
             echo "Une autre institution avec le même nom existe déjà, impossible d'ajouter cette institution";
-            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
             return;
         }
     }
@@ -431,7 +431,7 @@ if (isset($_POST['institutionCheck']) == 1) {
     if($_POST['nom'] != "") {
         if($fetch_résultat['existe_déjà'] == 0) {
             echo "L'institution de provenance n'existe pas";
-            echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
             return;
         } else {
             $ajouter_provenance = true;
@@ -445,8 +445,8 @@ try {
     						   ':taille' => $_POST['taille'], ':sexe' => $_POST['sexe'],
     						   ':date_naissance' => $date, ':n_enclos' => $_POST['n_enclos']));
 } catch (Exception $e) {
-    echo "L'ajout de l'animal n'a pas fonctionné pour une raison inconnue</br>.";
-    echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+    echo "L'ajout de l'animal n'a pas fonctionné pour une raison inconnue.</br>";
+    echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
     return;
 }
 
@@ -456,8 +456,8 @@ if ($ajouter_institution) {
         $executable->execute(array(':nom' => $_POST['nom'], ':rue' => $_POST['rue'], ':code_postal' => $_POST['code_postal'],
                                    ':pays' => $_POST['pays']));
     } catch (Exception $e) {
-        echo "L'ajout de l'institution n'a pas fonctionné pour une raison inconnue </br>";
-        echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        echo "L'ajout de l'institution n'a pas fonctionné pour une raison inconnue.</br>";
+        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
         return;
     }
 }
@@ -468,8 +468,8 @@ if ($ajouter_provenance) {
         $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
                                    ':nom_institution' => $_POST['nom']));
     } catch (Exception $e) {
-        echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue </br>";
-        echo '<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue.</br>";
+        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
         return;
     }
 }
@@ -483,7 +483,7 @@ foreach ($_POST as $key => $value) {
 }
 
 ?>
-<a href="page_e.html"> <input type="button" value="Faire une nouvelle requête"> </a>
+<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>
 </div>
 </body>
 </html>
