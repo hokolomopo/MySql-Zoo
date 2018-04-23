@@ -200,6 +200,11 @@ p{
 <div class="main">
 <?php
 
+function invalid_request()
+{
+     exit("requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.");
+}
+
 try
 {
     $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
@@ -211,27 +216,91 @@ catch (Exception $e)
 
 $request = 'SELECT * FROM ' . $_POST['table'];
 $first = true;
-$valid_request = true;
 
 foreach($_POST as $cle => $valeur){
+    
+    if(!array_key_exists('table', $_POST))
+        invalid_request();
+
     //empeche l'utilisateur de placer des balises html et donc d'exécuter du javascript
     $cle = htmlspecialchars($cle);
     $valeur = htmlspecialchars($valeur);
+
     if($cle != 'table'){
-        $test = "SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" . $_POST['table'] . "' AND column_name LIKE '" .  $cle . "'";
-        $test_exe = $bdd->prepare($test);
-        $test_exe->execute();
-        $nb_elem = count($test_exe->fetchAll());
+
+        $info_exe = $bdd->prepare(file_get_contents('get_db_information.sql'));
+        $info_exe -> execute(array(':table' => $_POST['table'], ':column' => $cle));
+        $info = $info_exe -> fetchAll();
+
+        $nb_elem = count($info);
+
         if($nb_elem == 0)
-            exit("requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.");
+            invalid_request();
 
         if($valeur != null){
+
+            //check data validity
+            $type = $info[0]['data_type'];
+            $valeur_is_string = false;
+            switch($type){
+
+                case 'char':
+                case 'varchar':
+                    
+                    //it is anyway a string, we thus assert that what's inside is not a number
+                    $test_valeur = $valeur;
+                    if(substr($valeur, 0, 1) == "-")
+                        $test_valeur = substr($valeur, 1);
+                    
+                    if(ctype_digit($test_valeur))
+                        exit("le champ " . $cle . " doit contenir une chaine de caractère");
+
+                    if(strlen($valeur) > $info[0]['character_maximum_length'])
+                        exit("le champ " . $cle . "doit contenir " . $info[0]['character_maximum_length'] . " caractères maximum");
+
+                    $valeur_is_string = true;
+
+                    break;
+
+                case 'datetime':
+
+                    $format = '%Y-%m-%d %H:%M:%S';
+                    if(! strptime($valeur, $format))
+                        exit("le format de " . $cle . " ne correspond pas au format attendu par le serveur");
+
+                    break;
+
+                case 'smallint':
+                case 'int':
+
+                    $test_valeur = $valeur;
+                    if(substr($valeur, 0, 1) == "-")
+                        $test_valeur = substr($valeur, 1);
+
+                    if(!ctype_digit($test_valeur))
+                        exit("le champ " . $cle . " doit contenir un entier");
+
+                    break;
+
+                default:
+                    exit("erreur serveur, le type de donnée de " . $cle . " n\'est pas géré par le serveur");
+            }
+
+            if($valeur_is_string){
+                $eq_operateur = "like";
+                $end_operateur = "%";
+            }
+            else{
+                $eq_operateur = "=";
+                $end_operateur = "";
+            }
+
             if($first){
-                $request = $request . " where " . $cle . "= '" . $valeur . "'";
+                $request = $request . " where " . $cle . " " . $eq_operateur . " '" . $valeur . $end_operateur . "'";
                 $first = false;
             }
             else{
-                $request = $request . " and " . $cle . "= '" . $valeur . "'";
+                $request = $request . " and " . $cle . " " . $eq_operateur . " '" . $valeur . $end_operateur . "'";
             }
         }
     }
