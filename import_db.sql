@@ -22,16 +22,13 @@ IGNORE 1 LINES
 (n_enclos, nom_climat, taille)
 ;
 
-ALTER TABLE Animal ADD date_naissance_txt VARCHAR(40);
 LOAD DATA LOCAL INFILE '/tmp/db2018/Animal.txt'
 INTO TABLE Animal
 FIELDS
     TERMINATED BY ','
 IGNORE 1 LINES
-(nom_scientifique, n_puce, taille, sexe, date_naissance_txt, n_enclos)
+(nom_scientifique, n_puce, taille, sexe, date_naissance, n_enclos)
 ;
-UPDATE Animal SET date_naissance = STR_TO_DATE(date_naissance_txt, '%d/%m/%Y');
-ALTER TABLE Animal DROP date_naissance_txt;
 
 LOAD DATA LOCAL INFILE '/tmp/db2018/Institution.txt'
 INTO TABLE Institution
@@ -73,16 +70,13 @@ IGNORE 1 LINES
 (n_registre, n_license, specialite)
 ;
 
-ALTER TABLE Entretien ADD date_txt VARCHAR(40);
 LOAD DATA LOCAL INFILE '/tmp/db2018/Entretien.txt'
 INTO TABLE Entretien
 FIELDS
     TERMINATED BY ','
 IGNORE 1 LINES
-(n_entretien, n_registre, n_materiel, date_txt, n_enclos)
+(n_entretien, n_registre, n_materiel, date_entretien, n_enclos)
 ;
-UPDATE Entretien SET date_entretien = STR_TO_DATE(date_txt, '%d/%m/%Y');
-ALTER TABLE Entretien DROP date_txt;
 
 LOAD DATA LOCAL INFILE '/tmp/db2018/Provenance.txt'
 INTO TABLE Provenance
@@ -92,13 +86,10 @@ IGNORE 1 LINES
 (nom_scientifique, n_puce, nom_institution)
 ;
 
-ALTER TABLE Intervention ADD date_txt VARCHAR(40);
 LOAD DATA LOCAL INFILE '/tmp/db2018/Intervention.txt'
 INTO TABLE Intervention
 FIELDS
     TERMINATED BY ','
 IGNORE 1 LINES
-(n_intervention, date_txt, description, n_registre, nom_scientifique, n_puce)
+(n_intervention, date_intervention, description, n_registre, nom_scientifique, n_puce)
 ;
-UPDATE Intervention SET date_intervention = STR_TO_DATE(date_txt, '%d/%m/%Y');
-ALTER TABLE Intervention DROP date_txt;

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS Animal (
     n_puce SMALLINT UNSIGNED NOT NULL,
     taille INT NOT NULL,
     sexe CHAR(1) NOT NULL,
-    date_naissance DATETIME NOT NULL,
+    date_naissance VARCHAR(40) NOT NULL,
     n_enclos SMALLINT NOT NULL,
     PRIMARY KEY (n_puce, nom_scientifique),
     FOREIGN KEY (nom_scientifique)             
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS Entretien (
 	n_entretien INT UNSIGNED NOT NULL AUTO_INCREMENT,
     n_registre INT UNSIGNED NOT NULL,
     n_materiel SMALLINT UNSIGNED NOT NULL,
-    date_entretien DATETIME NOT NULL,
+    date_entretien VARCHAR(40) NOT NULL,
     n_enclos SMALLINT(10) NOT NULL,
     PRIMARY KEY (n_entretien),
     FOREIGN KEY (n_enclos)
@@ -116,7 +116,7 @@ SHOW TABLES;
 
 CREATE TABLE IF NOT EXISTS Intervention(
 	n_intervention INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	date_intervention DATETIME NOT NULL,
+	date_intervention VARCHAR(40) NOT NULL,
 	description VARCHAR(40), 
 	n_registre INT UNSIGNED NOT NULL,
  	nom_scientifique VARCHAR(40) NOT NULL,
