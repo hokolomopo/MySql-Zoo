@@ -2,7 +2,7 @@
 
 session_start();
 
-if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
+if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']) {
     echo <<< EOT
     <!DOCTYPE html>
     <html>

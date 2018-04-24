@@ -487,9 +487,9 @@ EOT;
         }
     }
 
-    else{
-        header('Location: connexion.php');
-    }
+} else {
+    header('Location: connexion.php');
+}
 
     echo <<< EOT
         <a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>
