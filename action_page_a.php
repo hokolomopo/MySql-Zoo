@@ -1,346 +1,360 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta charset="UTF-8">
+<?php 
 
-<style>
-body {
-    padding: 0;
-    margin: 0;
-    font-family: "Lato", sans-serif;
-    background-color: BurlyWood;
-}
+session_start();
 
-.sidenav {
-    height: 100%;
-    width: 200px;
-    position: fixed;
-    z-index: 1;
-    top: 200px;
-    left: 0;
-    background-color: #111;
-    padding-top: 20px;
-}
+if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
+    echo <<< EOT
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
 
-.hoverable a {
-    padding: 6px 6px 6px 32px;
+    <style>
+    body {
+        padding: 0;
+        margin: 0;
+        font-family: "Lato", sans-serif;
+        background-color: BurlyWood;
+    }
 
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-}
+    .sidenav {
+        height: 100%;
+        width: 200px;
+        position: fixed;
+        z-index: 1;
+        top: 200px;
+        left: 0;
+        background-color: #111;
+        padding-top: 20px;
+    }
 
-.main {
-    margin-left: 210px;
-    margin-top: 210px;
-}
+    .hoverable a {
+        padding: 6px 6px 6px 32px;
 
-.header {
-    position: fixed;
-    top :0;
-    height : 200px;
-    width: 100%;
-    z-index: 1;
-}
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+    }
 
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
+    .main {
+        margin-left: 210px;
+        margin-top: 210px;
+    }
 
-.dropdown div{
-    position: relative;
-    display: inline-block;
-}
+    .header {
+        position: fixed;
+        top :0;
+        height : 200px;
+        width: 100%;
+        z-index: 1;
+    }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    left: 200px;
-    top : 60px;
-    background-color: #111;
-    min-width: 160px;
-    z-index: 0;
-}
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
 
-.dropdown:hover .dropdown-content {
-    display: block;
-}
+    .dropdown div{
+        position: relative;
+        display: inline-block;
+    }
 
-ul
-{
-    margin: 0;
-    padding: 0;
-}
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        left: 200px;
+        top : 60px;
+        background-color: #111;
+        min-width: 160px;
+        z-index: 0;
+    }
 
-li
-{
-    list-style:none;
-    padding-bottom: 5px;
-    padding-top: 5px;
-}
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
 
-.hoverable:hover{
-    background-color: #818181;
-}
+    ul
+    {
+        margin: 0;
+        padding: 0;
+    }
 
-.hoverable:hover .link{
-    color: #F0F8FF;
-}
+    li
+    {
+        list-style:none;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
 
-.hoverable2:hover{
-    background-color: #818181;
-}
+    .hoverable:hover{
+        background-color: #818181;
+    }
 
-.hoverable2:hover a{
-    color: #F0F8FF;
-}
+    .hoverable:hover .link{
+        color: #F0F8FF;
+    }
 
-.hoverable2 a{
-    padding-left: 10px;
-}
+    .hoverable2:hover{
+        background-color: #818181;
+    }
 
+    .hoverable2:hover a{
+        color: #F0F8FF;
+    }
 
-input[type=text], select {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}  
+    .hoverable2 a{
+        padding-left: 10px;
+    }
 
 
-input[type=submit] {
-    width: 100%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;  
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    input[type=text], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }  
 
-input[type=submit]:hover {
-    background-color: #45a049;
-}
 
-input[type=button] {
-    display: block;
-    width: 50%;
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 0 auto;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    input[type=submit] {
+        width: 100%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;  
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-a{
-    text-decoration: none;
-}
+    input[type=submit]:hover {
+        background-color: #45a049;
+    }
 
-.form {
-    position: :absolute;
-    left : 100px;
-    width: 60%;
-    border-radius: 5px;
-    padding: 20px;
-}
+    input[type=button] {
+        display: block;
+        width: 50%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 0 auto;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-p{
-    padding-left: 20px;
-}
+    a{
+        text-decoration: none;
+    }
 
-</style>
-</head>
-<body>
+    .form {
+        position: :absolute;
+        left : 100px;
+        width: 60%;
+        border-radius: 5px;
+        padding: 20px;
+    }
 
-<div class="header">
-      <img src="ccs_banner.png" width="100%" height="100%">
-</div>
+    p{
+        padding-left: 20px;
+    }
 
-<div class="sidenav">
-    <ul >
-        <li class="hoverable">
-                <a href="accueil.html" class="link">Acceuil</a>
-        </li>
-        <li class="dropdown hoverable"> 
-            <a href="#" class="link" >Services</a>
-            <ul class="dropdown-content">
-                <li class="hoverable2">
-                    <a href="page_a.html" class="link2">Question a</a>
-                </li>
-                <li class="hoverable2">
-                    <a href="page_b.html" class="link2">Question b</a>
-                </li>
-                <li class="hoverable2">
-                    <a href="page_c.html" class="link2">Question c</a>
-                </li>
-                <li class="hoverable2">
-                    <a href="page_d.html" class="link2">Question d</a>
-                </li>
-                <li class="hoverable2">
-                    <a href="page_e.html" class="link2">Question e</a>
-                </li>
+    </style>
+    </head>
+    <body>
 
-            </ul>   
+    <div class="header">
+          <img src="ccs_banner.png" width="100%" height="100%">
+    </div>
 
-        </li>
-        <li class="hoverable">
-            <a href="credits.html" class="link">Crédits</a>
-        </li>
-    </ul>
-</div>
+    <div class="sidenav">
+        <ul >
+            <li class="hoverable">
+                    <a href="accueil.html" class="link">Acceuil</a>
+            </li>
+            <li class="dropdown hoverable"> 
+                <a href="#" class="link" >Services</a>
+                <ul class="dropdown-content">
+                    <li class="hoverable2">
+                        <a href="page_a.html" class="link2">Question a</a>
+                    </li>
+                    <li class="hoverable2">
+                        <a href="page_b.html" class="link2">Question b</a>
+                    </li>
+                    <li class="hoverable2">
+                        <a href="page_c.html" class="link2">Question c</a>
+                    </li>
+                    <li class="hoverable2">
+                        <a href="page_d.html" class="link2">Question d</a>
+                    </li>
+                    <li class="hoverable2">
+                        <a href="page_e.html" class="link2">Question e</a>
+                    </li>
 
-<div class="main">
-<?php
+                </ul>   
 
-function invalid_request()
-{
-     exit("requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.");
-}
+            </li>
+            <li class="hoverable">
+                <a href="credits.html" class="link">Crédits</a>
+            </li>
+        </ul>
+    </div>
 
-try
-{
-    $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
-}
-catch (Exception $e)
-{
-        die('Erreur : ' . $e->getMessage());
-}
+    <div class="main">
+EOT;
 
-$request = 'SELECT * FROM ' . $_POST['table'];
-$first = true;
+    function invalid_request()
+    {
+         exit("requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.");
+    }
 
-foreach($_POST as $cle => $valeur){
-    
-    if(!array_key_exists('table', $_POST))
-        invalid_request();
+    try
+    {
+        $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
+    }
+    catch (Exception $e)
+    {
+            die('Erreur : ' . $e->getMessage());
+    }
 
-    //empeche l'utilisateur de placer des balises html et donc d'exécuter du javascript
-    $cle = htmlspecialchars($cle);
-    $valeur = htmlspecialchars($valeur);
+    $request = 'SELECT * FROM ' . $_POST['table'];
+    $first = true;
 
-    if($cle != 'table'){
-
-        $info_exe = $bdd->prepare(file_get_contents('get_db_information.sql'));
-        $info_exe -> execute(array(':table' => $_POST['table'], ':column' => $cle));
-        $info = $info_exe -> fetchAll();
-
-        $nb_elem = count($info);
-
-        if($nb_elem == 0)
+    foreach($_POST as $cle => $valeur){
+        
+        if(!array_key_exists('table', $_POST))
             invalid_request();
 
-        if($valeur != null){
+        //empeche l'utilisateur de placer des balises html et donc d'exécuter du javascript
+        $cle = htmlspecialchars($cle);
+        $valeur = htmlspecialchars($valeur);
 
-            //check data validity
-            $type = $info[0]['data_type'];
-            $valeur_is_string = false;
-            switch($type){
+        if($cle != 'table'){
 
-                case 'char':
-                case 'varchar':
-                    
-                    //it is anyway a string, we thus assert that what's inside is not a number
-                    $test_valeur = $valeur;
-                    if(substr($valeur, 0, 1) == "-")
-                        $test_valeur = substr($valeur, 1);
-                    
-                    if(ctype_digit($test_valeur))
-                        exit("le champ " . $cle . " doit contenir une chaine de caractère");
+            $info_exe = $bdd->prepare(file_get_contents('get_db_information.sql'));
+            $info_exe -> execute(array(':table' => $_POST['table'], ':column' => $cle));
+            $info = $info_exe -> fetchAll();
 
-                    if(strlen($valeur) > $info[0]['character_maximum_length'])
-                        exit("le champ " . $cle . "doit contenir " . $info[0]['character_maximum_length'] . " caractères maximum");
+            $nb_elem = count($info);
 
-                    $valeur_is_string = true;
+            if($nb_elem == 0)
+                invalid_request();
 
-                    break;
+            if($valeur != null){
 
-                case 'datetime':
+                //check data validity
+                $type = $info[0]['data_type'];
+                $valeur_is_string = false;
+                switch($type){
 
-                    $format = '%d/%m/%Y %H:%M:%S';
-                    if(! strptime($valeur, $format))
-                        exit("le format de " . $cle . " ne correspond pas au format attendu par le serveur");
+                    case 'char':
+                    case 'varchar':
+                        
+                        //it is anyway a string, we thus assert that what's inside is not a number
+                        $test_valeur = $valeur;
+                        if(substr($valeur, 0, 1) == "-")
+                            $test_valeur = substr($valeur, 1);
+                        
+                        if(ctype_digit($test_valeur))
+                            exit("le champ " . $cle . " doit contenir une chaine de caractère");
 
-                    break;
+                        if(strlen($valeur) > $info[0]['character_maximum_length'])
+                            exit("le champ " . $cle . "doit contenir " . $info[0]['character_maximum_length'] . " caractères maximum");
 
-                case 'smallint':
-                case 'int':
+                        $valeur_is_string = true;
 
-                    $test_valeur = $valeur;
-                    if(substr($valeur, 0, 1) == "-")
-                        $test_valeur = substr($valeur, 1);
+                        break;
 
-                    if(!ctype_digit($test_valeur))
-                        exit("le champ " . $cle . " doit contenir un entier");
+                    case 'datetime':
 
-                    break;
+                        $format = '%d/%m/%Y %H:%M:%S';
+                        if(! strptime($valeur, $format))
+                            exit("le format de " . $cle . " ne correspond pas au format attendu par le serveur");
 
-                default:
-                    exit("erreur serveur, le type de donnée de " . $cle . " n\'est pas géré par le serveur");
-            }
+                        break;
 
-            if($valeur_is_string){
-                $eq_operateur = "like";
-                $end_operateur = "%";
-            }
-            else{
-                $eq_operateur = "=";
-                $end_operateur = "";
-            }
+                    case 'smallint':
+                    case 'int':
 
-            if($first){
-                $request = $request . " where " . $cle . " " . $eq_operateur . " '" . $valeur . $end_operateur . "'";
-                $first = false;
-            }
-            else{
-                $request = $request . " and " . $cle . " " . $eq_operateur . " '" . $valeur . $end_operateur . "'";
+                        $test_valeur = $valeur;
+                        if(substr($valeur, 0, 1) == "-")
+                            $test_valeur = substr($valeur, 1);
+
+                        if(!ctype_digit($test_valeur))
+                            exit("le champ " . $cle . " doit contenir un entier");
+
+                        break;
+
+                    default:
+                        exit("erreur serveur, le type de donnée de " . $cle . " n\'est pas géré par le serveur");
+                }
+
+                if($valeur_is_string){
+                    $eq_operateur = "like";
+                    $end_operateur = "%";
+                }
+                else{
+                    $eq_operateur = "=";
+                    $end_operateur = "";
+                }
+
+                if($first){
+                    $request = $request . " where " . $cle . " " . $eq_operateur . " '" . $valeur . $end_operateur . "'";
+                    $first = false;
+                }
+                else{
+                    $request = $request . " and " . $cle . " " . $eq_operateur . " '" . $valeur . $end_operateur . "'";
+                }
             }
         }
     }
+
+    $request = $request . ";"; 
+
+    $executable = $bdd->prepare($request);
+
+    $executable->execute();
+
+    $resultat = $executable->fetchAll();
+
+    if(count($resultat) == 0)
+        exit("Pas de résultats </br>");
+
+    echo "Voici le résultat de la requête: </br>";
+
+    $i = 1;
+    foreach($resultat as $donnees){
+        echo "</br>";
+        if($i == 1){
+            echo "1er resultat: </br>";
+        }
+        else{
+            echo $i . " ème resultat: </br>";
+        }
+        echo "</br>";
+        foreach($donnees as $champ => $valeur){
+            if(is_string($champ))
+                echo $champ . " = " . $valeur . "</br>";
+        }
+        $i++;
+    }
+    echo <<< EOT
+    </br>
+    <a href="page_a.html"> <input type="button" value="Faire une nouvelle requête"> </a>
+
+    </div>
+    </div>
+    </body>
+    </html> 
+EOT;
 }
 
-$request = $request . ";"; 
-
-$executable = $bdd->prepare($request);
-
-$executable->execute();
-
-$resultat = $executable->fetchAll();
-
-if(count($resultat) == 0)
-    exit("Pas de résultats </br>");
-
-echo "Voici le résultat de la requête: </br>";
-
-$i = 1;
-foreach($resultat as $donnees){
-    echo "</br>";
-    if($i == 1){
-        echo "1er resultat: </br>";
-    }
-    else{
-        echo $i . " ème resultat: </br>";
-    }
-    echo "</br>";
-    foreach($donnees as $champ => $valeur){
-        if(is_string($champ))
-            echo $champ . " = " . $valeur . "</br>";
-    }
-    $i++;
+else{
+    header('Location: connexion.php');
 }
 
 ?>
-</br>
-<a href="page_a.html"> <input type="button" value="Faire une nouvelle requête"> </a>
 
-</div>
-</div>
-</body>
-</html> 

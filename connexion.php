@@ -204,7 +204,7 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     header('Location: menu.php');
 }
 
-elseif(array_key_exists('uname', $_POST) and array_key_exists('password', $_POST) and $_POST['uname'] == $right_uname and $_POST['password'] == $right_password){
+elseif(array_key_exists('uname', $_POST) and array_key_exists('password', $_POST) and htmlspecialchars($_POST['uname']) == $right_uname and htmlspecialchars($_POST['password']) == $right_password){
 
     $_SESSION['connected'] = true;
     header('Location: menu.php');
