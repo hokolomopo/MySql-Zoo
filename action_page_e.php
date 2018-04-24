@@ -482,10 +482,9 @@ EOT;
     echo "L'animal a été ajouté avec succès !</br>";
     echo "Voici un récapitulatif :</br>";
     foreach ($_POST as $key => $value) {
-        if ($value != "" && $key != "avertissement_confirmé") {
+        if ($value != "" && $key != "avertissement_confirmé" && $key != "institutionCheck") {
             echo $value . "</br>";
         }
-    }
     }
 
     else{
