@@ -4,6 +4,7 @@ session_start();
 
 include 'overlay.php';
 include 'return_button.php';
+include 'db_connect.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']) {
     echo <<< EOT
@@ -38,7 +39,7 @@ EOT;
 
     try
     {
-        $bdd = new PDO('mysql:host=localhost;dbname=zoo;charset=utf8', 'root', '');
+        $bdd = new PDO(get_pdo_path(), get_pdo_user(), get_pdo_password());
     }
     catch (Exception $e)
     {
