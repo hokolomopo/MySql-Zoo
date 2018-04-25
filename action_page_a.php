@@ -95,9 +95,8 @@ EOT;
                         break;
 
                     case 'datetime':
-
-                        $format = '%d/%m/%Y %H:%M:%S';
-                        if(! strptime($valeur, $format))
+                        
+                        if (!(preg_match('#^([0-9]{4}).([0-9]{2}).([0-9]{2})$#', $valeur, $date_tableau) == 1 && checkdate($date_tableau[2], $date_tableau[3], $date_tableau[1])))
                             exit("le format de " . $cle . " ne correspond pas au format attendu par le serveur");
 
                         break;

@@ -54,6 +54,16 @@ input[type=submit] {
     cursor: pointer;
 }
 
+input[type=date], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}  
+
 input[type=submit]:hover {
     background-color: #45a049;
 }
@@ -155,7 +165,7 @@ echo <<< EOT
             list.innerHTML += '<li><label for="champ">sexe</label>' + 
                               '<input type="text" id="sexe" name="sexe" placeholder="sexe"></li>';
             list.innerHTML += '<li><label for="champ">date de naissance</label>' + 
-                              '<input type="text" id="date_naissance" name="date_naissance" placeholder="date de naissance"></li>';
+                              '<input type="date" id="date_naissance" name="date_naissance" placeholder="date de naissance"></li>';
             list.innerHTML += '<li><label for="champ">numéro de l\'enclos</label>' + 
                               '<input type="text" id="n_enclos" name="n_enclos" placeholder="numéro de l\'enclos"></li>';
             break;
@@ -212,7 +222,7 @@ echo <<< EOT
             list.innerHTML += '<li><label for="champ">Numéro de l\'intervention</label>' + 
                               '<input type="text" id="n_intervention" name="n_intervention" placeholder="Numéro de l\'intervention"></li>';
             list.innerHTML += '<li><label for="champ">Date de l\'intervention</label>' + 
-                              '<input type="text" id="date_intervention" name="date_intervention" placeholder="Date de l\'intervention"></li>';
+                              '<input type="date" id="date_intervention" name="date_intervention" placeholder="Date de l\'intervention"></li>';
             list.innerHTML += '<li><label for="champ">Description</label>' + 
                               '<input type="text" id="description" name="description" placeholder="Description"></li>';
             list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
@@ -231,7 +241,7 @@ echo <<< EOT
             list.innerHTML += '<li><label for="champ">Numéro de matériel</label>' + 
                               '<input type="text" id="n_materiel" name="n_materiel" placeholder="Numéro de matériel"></li>';
             list.innerHTML += '<li><label for="champ">Date de l\'entretien</label>' + 
-                              '<input type="text" id="date_entretien" name="date_entretien" placeholder="Date de l\'entretien"></li>';
+                              '<input type="date" id="date_entretien" name="date_entretien" placeholder="Date de l\'entretien"></li>';
             list.innerHTML += '<li><label for="champ">Numéro de l\'enclos</label>' + 
                               '<input type="text" id="n_enclos" name="n_enclos" placeholder="Numéro de l\'enclos"></li>';
             break;
