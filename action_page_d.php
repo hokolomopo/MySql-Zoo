@@ -45,7 +45,9 @@ EOT;
     $executable->execute();
     echo "La proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat";
     echo "ne correspond pas à l'un de ceux supportés par son espèce est de:</br>";
-    echo doubleval($executable->fetch()[0])*100;
+    $requestResult = $executable->fetch();
+    $proportion = $requestResult['proportion'];
+    echo doubleval($proportion)*100;
     echo "%";
 
     get_body_return_button('page_d.php');
