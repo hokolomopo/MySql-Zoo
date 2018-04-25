@@ -2,6 +2,8 @@
 
 session_start();
 
+include 'overlay.php';
+
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     echo <<< EOT
 <!DOCTYPE html>
@@ -11,68 +13,11 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
 <meta charset="UTF-8">
 
 <style>
-body {
-    padding: 0;
-    margin: 0;
-    font-family: "Lato", sans-serif;
-    background-color: BurlyWood;
-}
+EOT;
 
-.sidenav {
-    height: 100%;
-    width: 200px;
-    position: fixed;
-    z-index: 1;
-    top: 200px;
-    left: 0;
-    background-color: #111;
-    padding-top: 20px;
-}
+get_style_overlay();
 
-.hoverable a {
-    padding: 6px 6px 6px 32px;
-
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-}
-
-.main {
-    margin-left: 210px;
-    margin-top: 210px;
-}
-
-.header {
-    position: fixed;
-    top :0;
-    height : 200px;
-    width: 100%;
-    z-index: 1;
-}
-
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
-
-.dropdown div{
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    left: 200px;
-    top : 60px;
-    background-color: #111;
-    min-width: 160px;
-    z-index: 0;
-}
-
-.dropdown:hover .dropdown-content {
-    display: block;
-}
+echo <<< EOT
 
 ul
 {
@@ -86,27 +31,6 @@ li
     padding-bottom: 5px;
     padding-top: 5px;
 }
-
-.hoverable:hover{
-    background-color: #818181;
-}
-
-.hoverable:hover .link{
-    color: #F0F8FF;
-}
-
-.hoverable2:hover{
-    background-color: #818181;
-}
-
-.hoverable2:hover a{
-    color: #F0F8FF;
-}
-
-.hoverable2 a{
-    padding-left: 10px;
-}
-
 
 input[type=text], select {
     width: 100%;
@@ -149,59 +73,27 @@ p{
 </style>
 </head>
 <body>
+EOT;
 
-<div class="header">
-      <img src="ccs_banner.png" width="100%" height="100%">
-</div>
+get_body_overlay();
 
-<div class="sidenav">
-    <ul >
-        <li class="hoverable">
-                <a href="accueil.html" class="link">Acceuil</a>
-        </li>
-        <li class="dropdown hoverable"> 
-            <a href="#" class="link" >Services</a>
-            <ul class="dropdown-content">
-                <li class="hoverable2">
-                    <a href="page_a.html" class="link2">Question a</a>
-                </li>
-                <li class="hoverable2">
-                    <a href="page_b.html" class="link2">Question b</a>
-                </li>
-                <li class="hoverable2">
-                    <a href="page_c.html" class="link2">Question c</a>
-                </li>
-                <li class="hoverable2">
-                    <a href="page_d.html" class="link2">Question d</a>
-                </li>
-                <li class="hoverable2">
-                    <a href="page_e.html" class="link2">Question e</a>
-                </li>
+begin_main();
 
-            </ul>   
+echo <<< EOT
+    <p> Cette page permet de calculer la proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat ne correspond pas à l'un de ceux supportés par leur espèce. </p>
+    <div class="form">
+    <form action="action_page_d.php" method="post">
 
-        </li>
-        <li class="hoverable">
-            <a href="credits.html" class="link">Crédits</a>
-        </li>
-    </ul>
-</div>
+        <input type="submit" value="Trouver">
+    </form>
+    </div>
+EOT;
 
-<div class="main">
-  <p> Cette page permet de calculer la proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat ne correspond pas à l'un de ceux supportés par leur espèce. </p>
-  <div class="form">
-  <form action="action_page_d.php" method="post">
+end_main();
 
-    <input type="submit" value="Trouver">
-  </form>
-</div>
-
-
-
-</div>
-     
-</body>
-</html> 
+echo <<< EOT
+    </body>
+    </html>
 EOT;
 }
 

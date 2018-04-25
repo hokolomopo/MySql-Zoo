@@ -2,6 +2,9 @@
 
 session_start();
 
+include 'overlay.php';
+include 'return_button.php';
+
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     echo <<< EOT
     <!DOCTYPE html>
@@ -11,200 +14,23 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     <meta charset="UTF-8">
 
     <style>
-    body {
-        padding: 0;
-        margin: 0;
-        font-family: "Lato", sans-serif;
-        background-color: BurlyWood;
-    }
+EOT;
+    
+    get_style_overlay();
 
-    .sidenav {
-        height: 100%;
-        width: 200px;
-        position: fixed;
-        z-index: 1;
-        top: 200px;
-        left: 0;
-        background-color: #111;
-        padding-top: 20px;
-    }
+    get_style_return_button();
 
-    .hoverable a {
-        padding: 6px 6px 6px 32px;
-
-        text-decoration: none;
-        font-size: 25px;
-        color: #818181;
-    }
-
-    .main {
-        margin-left: 210px;
-        margin-top: 210px;
-    }
-
-    .header {
-        position: fixed;
-        top :0;
-        height : 200px;
-        width: 100%;
-        z-index: 1;
-    }
-
-    @media screen and (max-height: 450px) {
-      .sidenav {padding-top: 15px;}
-      .sidenav a {font-size: 18px;}
-    }
-
-    .dropdown div{
-        position: relative;
-        display: inline-block;
-    }
-
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        left: 200px;
-        top : 60px;
-        background-color: #111;
-        min-width: 160px;
-        z-index: 0;
-    }
-
-    .dropdown:hover .dropdown-content {
-        display: block;
-    }
-
-    ul
-    {
-        margin: 0;
-        padding: 0;
-    }
-
-    li
-    {
-        list-style:none;
-        padding-bottom: 5px;
-        padding-top: 5px;
-    }
-
-    .hoverable:hover{
-        background-color: #818181;
-    }
-
-    .hoverable:hover .link{
-        color: #F0F8FF;
-    }
-
-    .hoverable2:hover{
-        background-color: #818181;
-    }
-
-    .hoverable2:hover a{
-        color: #F0F8FF;
-    }
-
-    .hoverable2 a{
-        padding-left: 10px;
-    }
-
-
-    input[type=text], select {
-        width: 100%;
-        padding: 12px 20px;
-        margin: 8px 0;
-        display: inline-block;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }  
-
-
-    input[type=submit] {
-        width: 100%;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    input[type=submit]:hover {
-        background-color: #45a049;
-    }
-
-    input[type=button] {
-        display: block;
-        width: 50%;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
-        margin: 0 auto;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    a{
-        text-decoration: none;
-    }
-
-    .form {
-        position: :absolute;
-        left : 100px;
-        width: 60%;
-        border-radius: 5px;
-        padding: 20px;
-    }
-
-    p{
-        padding-left: 20px;
-    }
-
+    echo <<< EOT
     </style>
     </head>
     <body>
-
-    <div class="header">
-          <img src="ccs_banner.png" width="100%" height="100%">
-    </div>
-
-    <div class="sidenav">
-        <ul >
-            <li class="hoverable">
-                    <a href="accueil.html" class="link">Acceuil</a>
-            </li>
-            <li class="dropdown hoverable"> 
-                <a href="#" class="link" >Services</a>
-                <ul class="dropdown-content">
-                    <li class="hoverable2">
-                        <a href="page_a.html" class="link2">Question a</a>
-                    </li>
-                    <li class="hoverable2">
-                        <a href="page_b.html" class="link2">Question b</a>
-                    </li>
-                    <li class="hoverable2">
-                        <a href="page_c.html" class="link2">Question c</a>
-                    </li>
-                    <li class="hoverable2">
-                        <a href="page_d.html" class="link2">Question d</a>
-                    </li>
-                    <li class="hoverable2">
-                        <a href="page_e.php" class="link2">Question e</a>
-                    </li>
-
-                </ul>   
-
-            </li>
-            <li class="hoverable">
-                <a href="credits.html" class="link">Crédits</a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="main">
 EOT;
+
+    get_body_overlay();
+
+    begin_main();
+
+    $return_page = 'page_e.php';
 
     try
     {
@@ -235,19 +61,19 @@ EOT;
     //vérifie les conditions d'intégrité des valeurs entrées
     if($_POST['n_puce'] == "" || $_POST['n_puce'] < 0 || $_POST['n_puce'] > 65535) {
         echo "Le numéro de puce doit être compris dans l'intervalle [0 ; 65 535]";
-        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        get_body_return_button($return_page);
         return;
     }
 
     if($_POST['taille'] == "" || $_POST['taille'] <= 0 || $_POST['taille'] > 2147483647) {
         echo "La taille doit être comprise dans l'intervalle [1 ; 2 147 483 647] cm.";
-        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        get_body_return_button($return_page);
         return;
     }
 
     if($_POST['sexe'] != 'M' && $_POST['sexe'] != 'F') {
         echo "Le sexe n'est pas valide, il doit être indiqué par M ou F.";
-        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        get_body_return_button($return_page);
         return;
     }
 
@@ -259,7 +85,7 @@ EOT;
     || $mois > 12 || $jour == false || $jour <= 0 || $jour > 31) {
         echo "La date doit être fournie au format aaaa*mm*jj où les * peuvent être remplacées par n'importe quel caractère,</br>";
         echo "et correspondre à une date valide dans l'intervalle [1900/01/01 ; 2018-12-31]";
-        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        get_body_return_button($return_page);
         return;
     }
     $date = $jour . "/" . $mois ."/" . $annee;
@@ -272,7 +98,7 @@ EOT;
     $bon_nom = $fetch_résultat['bon_nom'];
     if ($bon_nom == 0) {
         echo "L'espèce doit appartenir à la base de donnée.";
-        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        get_body_return_button($return_page);
         return;
     }
 
@@ -283,7 +109,7 @@ EOT;
     $bon_enclos = $fetch_résultat['bon_enclos'];
     if ($bon_enclos == 0) {
         echo "L'enclos doit exister.";
-        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        get_body_return_button($return_page);
         return;
     }
 
@@ -306,7 +132,7 @@ EOT;
             echo "</br>";
             $fetch_résultat = $executable->fetch();
         }
-        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        get_body_return_button($return_page);
         return;
     }
 
@@ -382,7 +208,7 @@ EOT;
                 </form>
             </div>
             ";
-            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            get_body_return_button($return_page);
             return;
         }
     }
@@ -398,24 +224,24 @@ EOT;
     if (isset($_POST['institutionCheck']) == 1) {
         if($_POST['nom'] == "") {
             echo "Le nom de l'institution doit contenir au moins une lettre.</br>";
-            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            get_body_return_button($return_page);
             return;
         }
 
         if ($fetch_résultat['existe_déjà'] == 0) {
             if ($_POST['rue'] == "") {
                 echo "La rue de l'institution est manquante";
-                echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+                get_body_return_button($return_page);
                 return;
             }
             if ($_POST['code_postal'] == "" || $_POST['code_postal'] <= 0) {
                 echo "Le code postal ne peut pas être négatif ou nul";
-                echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+                get_body_return_button($return_page);
                 return;
             }
             if($_POST['pays'] == "") {
                 echo "Le pays de l'institution est manquant";
-                echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+                get_body_return_button($return_page);
                 return;
             }
             $ajouter_institution = true;
@@ -428,7 +254,7 @@ EOT;
                 $ajouter_provenance = true;
             } else {
                 echo "Une autre institution avec le même nom existe déjà, impossible d'ajouter cette institution";
-                echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+                get_body_return_button($return_page);
                 return;
             }
         }
@@ -436,7 +262,7 @@ EOT;
         if($_POST['nom'] != "") {
             if($fetch_résultat['existe_déjà'] == 0) {
                 echo "L'institution de provenance n'existe pas";
-                echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+                get_body_return_button($return_page);
                 return;
             } else {
                 $ajouter_provenance = true;
@@ -451,7 +277,7 @@ EOT;
                                    ':date_naissance' => $date, ':n_enclos' => $_POST['n_enclos']));
     } catch (Exception $e) {
         echo "L'ajout de l'animal n'a pas fonctionné pour une raison inconnue.</br>";
-        echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+        get_body_return_button($return_page);
         return;
     }
 
@@ -462,7 +288,7 @@ EOT;
                                        ':pays' => $_POST['pays']));
         } catch (Exception $e) {
             echo "L'ajout de l'institution n'a pas fonctionné pour une raison inconnue.</br>";
-            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            get_body_return_button($return_page);
             return;
         }
     }
@@ -474,7 +300,7 @@ EOT;
                                        ':nom_institution' => $_POST['nom']));
         } catch (Exception $e) {
             echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue.</br>";
-            echo '<a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>';
+            get_body_return_button($return_page);
             return;
         }
     }
@@ -491,9 +317,11 @@ EOT;
     header('Location: connexion.php');
 }
 
+    get_body_return_button($return_page);
+
+    end_main();
+    
     echo <<< EOT
-        <a href="page_e.php"> <input type="button" value="Faire une nouvelle requête"> </a>
-    </div>
     </body>
     </html>
 EOT;
