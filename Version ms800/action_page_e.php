@@ -4,6 +4,8 @@ session_start();
 
 include 'overlay.php';
 include 'return_button.php';
+include 'db_connect.php';
+include 'execute_sql.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     echo <<< EOT
@@ -85,12 +87,12 @@ EOT;
 
     try
     {
-        $bdd = new PDO('mysql:host=localhost;dbname=group24;charset=utf8', 'group24', '8g7F9dhUCX');
+        $bdd = new PDO(get_pdo_path(), get_pdo_user(), get_pdo_password());
         $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
     catch (Exception $e)
     {
-        fwrite(STDERR, "Une erreur inattendue est survenue lors de la connexion à la base de donnée" . $e->getMessage());
+        fwrite('STDERR', "Une erreur inattendue est survenue lors de la connexion à la base de donnée" . $e->getMessage());
         exit(1);
     }
 
@@ -127,47 +129,28 @@ EOT;
     $date = $date_tableau[3] . "/" . $date_tableau[2] ."/" . $date_tableau[1];
 
     //vérifie que les références vers d'autres tables sont correctes
-    $executable = $bdd->prepare(file_get_contents('e_vérifie_nom_scientifique.sql'));
-    $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique']));
-    $fetch_résultat = $executable->fetchAll();
-
-    print_r($fetch_résultat);
-    //$bon_nom = $fetch_résultat['bon_nom'];
-    if (true/*$bon_nom == 0*/) {
+    if (! (execute_vérification_existence($bdd, 'e_vérifie_nom_scientifique.sql', array(':nom_scientifique' => $_POST['nom_scientifique']))) ) {
         echo "L'espèce doit appartenir à la base de donnée.";
         get_body_return_button($return_page);
         return;
     }
 
-    $executable = $bdd->prepare(file_get_contents('e_vérifie_enclos.sql'));
-    $executable->execute(array(':n_enclos' => $_POST['n_enclos']));
-    $fetch_résultat = $executable->fetch();
-
-    $bon_enclos = $fetch_résultat['bon_enclos'];
-    if ($bon_enclos == 0) {
+    if (! (execute_vérification_existence($bdd, 'e_vérifie_enclos.sql', array(':n_enclos' => $_POST['n_enclos']))) ) {
         echo "L'enclos doit exister.";
         get_body_return_button($return_page);
         return;
     }
 
-    $executable = $bdd->prepare(file_get_contents('e_animal_existe_déjà.sql'));
-    $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce']));
-    $fetch_résultat = $executable->fetch();
-
-    $bon_animal = $fetch_résultat['bon_animal'];
-    if ($bon_animal != 0) {
+    if (execute_vérification_existence($bdd, 'e_animal_existe_déjà.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce']))) {
         echo "Cet animal existe déjà, veuillez choisir un autre numéro de puce.</br>";
         echo "Voici la liste, triée dans l'ordre croissant, des numéros de puce déjà utilisés pour l'espèce ";
         echo $_POST['nom_scientifique'];
         echo ":</br>";
-        $executable = $bdd->prepare(file_get_contents('e_n_puce.sql'));
-        $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique']));
 
-        $fetch_résultat = $executable->fetch();
-        while($fetch_résultat) {
-            echo $fetch_résultat['n_puce'];
+        $animaux = execute_sql_classique($bdd, 'e_n_puce.sql', array(':nom_scientifique' => $_POST['nom_scientifique']));
+        foreach ($animaux as $animal) {
+            echo $animal['n_puce'];
             echo "</br>";
-            $fetch_résultat = $executable->fetch();
         }
         get_body_return_button($return_page);
         return;
@@ -176,12 +159,7 @@ EOT;
 
     if($_POST['avertissement_confirmé'] == "faux") {
         //Avertissement si l'enclos n'est pas adapté
-        $executable = $bdd->prepare(file_get_contents('e_vérifie_climat.sql'));
-        $executable->execute(array(':n_enclos' => $_POST['n_enclos'], ':nom_scientifique' => $_POST['nom_scientifique']));
-        $fetch_résultat = $executable->fetch();
-
-        $bon_climat = $fetch_résultat['bon_climat'];
-        if ($bon_climat == 0) {
+        if (! (execute_vérification_existence($bdd, 'e_vérifie_climat.sql', array(':n_enclos' => $_POST['n_enclos'], ':nom_scientifique' => $_POST['nom_scientifique']))) ) {
             echo "L'enclos que vous avez choisi n'est pas adapté pour cette espèce, voulez-vous quand même ajouter l'animal?</br>";
             echo "Voici un récapitulatif des informations que vous avez entrées: </br></br>";
 
@@ -253,9 +231,7 @@ EOT;
     $ajouter_institution = false;
     $ajouter_provenance = false;
 
-    $executable = $bdd->prepare(file_get_contents('e_institution_existe_déjà.sql'));
-    $executable->execute(array('nom' => $_POST['nom']));
-    $fetch_résultat = $executable->fetch();
+    $institution = (execute_sql_classique($bdd, 'e_institution_existe_déjà.sql', array('nom' => $_POST['nom'])))[0];
 
     //Il faut ajouter une nouvelle institution
     if (isset($_POST['institutionCheck']) == 1) {
@@ -265,17 +241,15 @@ EOT;
             return;
         }
 
-        if ($fetch_résultat['existe_déjà'] == 0) {
+        if ($institution['existe_déjà'] == 0) {
             if ($_POST['rue'] == "") {
                 echo "La rue de l'institution est manquante";
                 get_body_return_button($return_page);
                 return;
             }
-            if ($_POST['code_postal'] == "" || $_POST['code_postal'] <= 0) {
-                echo "Le code postal ne peut pas être négatif ou nul";
-                get_body_return_button($return_page);
-                return;
-            }
+
+            vérifie_conditions_intégrité($_POST['code_postal'], 1, 999999999, "Le code postal");
+
             if($_POST['pays'] == "") {
                 echo "Le pays de l'institution est manquant";
                 get_body_return_button($return_page);
@@ -285,8 +259,7 @@ EOT;
             $ajouter_provenance = true;
 
         } else {
-            if ($fetch_résultat['rue'] == $_POST['rue'] && $fetch_résultat['code_postal'] == $_POST['code_postal'] &&
-                $fetch_résultat['pays'] == $_POST['pays']) {
+            if ($institution['rue'] == $_POST['rue'] && $institution['code_postal'] == $_POST['code_postal'] && $institution['pays'] == $_POST['pays']) {
                 echo "Avertissement: l'institution que vous avez entrée existait déjà, elle n'a donc pas été ajoutée</br>";
                 $ajouter_provenance = true;
             } else {
@@ -297,7 +270,7 @@ EOT;
         }
     } else {
         if($_POST['nom'] != "") {
-            if($fetch_résultat['existe_déjà'] == 0) {
+            if($institution['existe_déjà'] == 0) {
                 echo "L'institution de provenance n'existe pas";
                 get_body_return_button($return_page);
                 return;
@@ -308,10 +281,9 @@ EOT;
     }
 
     try {
-        $executable = $bdd->prepare(file_get_contents('e_ajoute_animal.sql'));
-        $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
-                                   ':taille' => $_POST['taille'], ':sexe' => $_POST['sexe'],
-                                   ':date_naissance' => $date, ':n_enclos' => $_POST['n_enclos']));
+        execute_sql_insert($bdd, 'e_ajoute_animal.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
+                                                                 ':taille' => $_POST['taille'], ':sexe' => $_POST['sexe'],
+                                                                 ':date_naissance' => $date, ':n_enclos' => $_POST['n_enclos']));
     } catch (Exception $e) {
         echo "L'ajout de l'animal n'a pas fonctionné pour une raison inconnue.</br>";
         get_body_return_button($return_page);
@@ -320,9 +292,8 @@ EOT;
 
     if ($ajouter_institution) {
         try {
-            $executable = $bdd->prepare(file_get_contents('e_ajoute_institution.sql'));
-            $executable->execute(array(':nom' => $_POST['nom'], ':rue' => $_POST['rue'], ':code_postal' => $_POST['code_postal'],
-                                       ':pays' => $_POST['pays']));
+            execute_sql_insert($bdd, 'e_ajoute_institution.sql', array(':nom' => $_POST['nom'], ':rue' => $_POST['rue'], ':code_postal' => $_POST['code_postal'],
+                                                                          ':pays' => $_POST['pays']));
         } catch (Exception $e) {
             echo "L'ajout de l'institution n'a pas fonctionné pour une raison inconnue.</br>";
             get_body_return_button($return_page);
@@ -332,9 +303,7 @@ EOT;
 
     if ($ajouter_provenance) {
         try {
-            $executable = $bdd->prepare(file_get_contents('e_ajoute_provenance.sql'));
-            $executable->execute(array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
-                                       ':nom_institution' => $_POST['nom']));
+            execute_sql_insert($bdd, 'e_ajoute_provenance.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'], ':nom_institution' => $_POST['nom']));
         } catch (Exception $e) {
             echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue.</br>";
             get_body_return_button($return_page);
