@@ -2,6 +2,8 @@
 
 session_start();
 
+$_SESSION['lastVisited'] = 'page_a.php';
+
 include 'overlay.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){

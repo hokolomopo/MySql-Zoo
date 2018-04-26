@@ -73,14 +73,18 @@ begin_main();
 $right_uname = "moi";
 $right_password = "lolmdr";
 
+$returnLocation = 'menu.php';
+if(isset($_SESSION['lastVisited']))
+    $returnLocation = $_SESSION['lastVisited'];
+
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
-    header('Location: menu.php');
+    header('Location: ' . $returnLocation);
 }
 
 elseif(array_key_exists('uname', $_POST) and array_key_exists('password', $_POST) and htmlspecialchars($_POST['uname']) == $right_uname and htmlspecialchars($_POST['password']) == $right_password){
 
     $_SESSION['connected'] = true;
-    header('Location: menu.php');
+    header('Location: ' . $returnLocation);
 }
 
 else{
