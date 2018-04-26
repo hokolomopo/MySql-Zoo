@@ -152,7 +152,7 @@ EOT;
         echo "Pas de résultats </br>";
 
     else{
-        echo "Voici le résultat de la requête: </br>";
+        echo "Voici le résultat de la requête: </br></br>";
 
         echo '<table>';
 
