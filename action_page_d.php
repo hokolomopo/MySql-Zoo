@@ -5,6 +5,7 @@ session_start();
 include 'overlay.php';
 include 'return_button.php';
 include 'db_connect.php';
+include 'execute_sql.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     echo <<< EOT
@@ -38,15 +39,14 @@ EOT;
     }
     catch (Exception $e)
     {
-        die('Erreur : ' . $e->getMessage());
+        exit("Une erreur inattendue est survenue lors de la connexion à la base de donnée : " . $e->getMessage());
     }
 
-    $executable = $bdd->prepare(file_get_contents('d_proportion.sql'));
-    $executable->execute();
+    $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);
+    $proportion = $résultats[0]['proportion'];
+
     echo "La proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat";
     echo "ne correspond pas à l'un de ceux supportés par son espèce est de:</br>";
-    $requestResult = $executable->fetch();
-    $proportion = $requestResult['proportion'];
     echo doubleval($proportion)*100;
     echo "%";
 

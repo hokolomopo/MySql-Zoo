@@ -1,5 +1,13 @@
 <?php
 
+/*Cette fonction exécute une requête sql passée en argument sous forme d'une chaîne de caractères, en utilisant la base de donnée bdd
+* et le tableau d'arguments tableau_arguments. Elle renvoie un tableau contenant les résultats.*/
+function execute_requête_string($bdd, $requête, $tableau_arguments) {
+	$executable = $bdd->prepare($requête);
+    $executable->execute($tableau_arguments);
+    return $executable->fetchAll();
+}
+
 /*Cette fonction exécute le fichier sql nom_fichier, en utilisant la base de donnée bdd et le tableau d'argument tableau_arguments.
 * Elle renvoie un tableau contenant les résultats.*/
 function execute_sql_classique($bdd, $nom_fichier, $tableau_arguments) {

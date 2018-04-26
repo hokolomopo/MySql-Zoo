@@ -6,6 +6,7 @@ include 'overlay.php';
 include 'return_button.php';
 include 'db_connect.php';
 include 'print_table.php';
+include 'execute_sql.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     echo <<< EOT
@@ -41,30 +42,18 @@ EOT;
     }
     catch (Exception $e)
     {
-        die('Erreur : ' . $e->getMessage());
+        exit("Une erreur inattendue est survenue lors de la connexion à la base de donnée : " . $e->getMessage());
     }
 
-    $executable = $bdd->prepare(file_get_contents('c_techniciens.sql'));
-    $executable->execute();
+    $résultats = execute_sql_classique($bdd, "c_techniciens.sql", null);
 
-    $result = $executable->fetchAll();
-
-    if(count($result) == 0)
+    if(count($résultats) == 0)
         echo "Pas de résultats </br>";
 
     else{
         echo "Les techniciens qui ont travaillé dans l'ensemble des enclos du parc animalier sont:</br></br>";
     
-        echo '<table>';
-
-        print_key_line($result[0]);
-
-        foreach($result as $data)
-        {
-            print_value_line($data);
-        }    
-
-        echo '</table>';
+        affiche_tableau($résultats, "Techniciens");
     }
 
     echo "</br>";

@@ -5,6 +5,7 @@ session_start();
 include 'overlay.php';
 include 'return_button.php';
 include 'db_connect.php';
+include 'print_table.php';
 include 'execute_sql.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
@@ -21,6 +22,8 @@ EOT;
     get_style_overlay();
 
     get_style_return_button();
+
+    get_style_table();
 
     echo <<< EOT
     input[type=text], select {
@@ -73,14 +76,14 @@ EOT;
 
     begin_main();
 
-    $return_page = 'page_e.php';
+    $page_de_retour = 'page_e.php';
 
     /*Cette fonction vérifie que val ne soit pas vide et qu'elle soit comprise entre les bornes min et max.
     * Si c'est le cas, elle ne fait rien; sinon, elle affiche un message d'erreur en nommant val par nom.*/
     function vérifie_conditions_intégrité($val, $min, $max, $nom) {
         if ($val == "" || $val < $min || $val > $max) {
             echo $nom . " doit appartenir à l'intervalle [" . $min . " ; " . $max . "].";
-            get_body_return_button($GLOBALS['return_page']);
+            get_body_return_button($GLOBALS['page_de_retour']);
             exit(1);
         }
     }
@@ -92,8 +95,7 @@ EOT;
     }
     catch (Exception $e)
     {
-        fwrite('STDERR', "Une erreur inattendue est survenue lors de la connexion à la base de donnée" . $e->getMessage());
-        exit(1);
+        exit("Une erreur inattendue est survenue lors de la connexion à la base de donnée : " . $e->getMessage());
     }
 
     //Les variables sont set même si l'utilisateur n'a rien n'écrit dans le formulaire
@@ -116,7 +118,7 @@ EOT;
 
     if($_POST['sexe'] != 'M' && $_POST['sexe'] != 'F') {
         echo "Le sexe n'est pas valide, il doit être indiqué par M ou F.";
-        get_body_return_button($return_page);
+        get_body_return_button($page_de_retour);
         return;
     }
 
@@ -131,13 +133,13 @@ EOT;
     //vérifie que les références vers d'autres tables sont correctes
     if (! (execute_vérification_existence($bdd, 'e_vérifie_nom_scientifique.sql', array(':nom_scientifique' => $_POST['nom_scientifique']))) ) {
         echo "L'espèce doit appartenir à la base de donnée.";
-        get_body_return_button($return_page);
+        get_body_return_button($page_de_retour);
         return;
     }
 
     if (! (execute_vérification_existence($bdd, 'e_vérifie_enclos.sql', array(':n_enclos' => $_POST['n_enclos']))) ) {
         echo "L'enclos doit exister.";
-        get_body_return_button($return_page);
+        get_body_return_button($page_de_retour);
         return;
     }
 
@@ -148,11 +150,10 @@ EOT;
         echo ":</br>";
 
         $animaux = execute_sql_classique($bdd, 'e_n_puce.sql', array(':nom_scientifique' => $_POST['nom_scientifique']));
-        foreach ($animaux as $animal) {
-            echo $animal['n_puce'];
-            echo "</br>";
-        }
-        get_body_return_button($return_page);
+
+        affiche_tableau($animaux, "Numéros de puce");
+
+        get_body_return_button($page_de_retour);
         return;
     }
 
@@ -223,7 +224,7 @@ EOT;
                 </form>
             </div>
             ";
-            get_body_return_button($return_page);
+            get_body_return_button($page_de_retour);
             return;
         }
     }
@@ -238,14 +239,14 @@ EOT;
     if (isset($_POST['institutionCheck']) == 1) {
         if($_POST['nom'] == "") {
             echo "Le nom de l'institution doit contenir au moins une lettre.</br>";
-            get_body_return_button($return_page);
+            get_body_return_button($page_de_retour);
             return;
         }
 
-        if ($institution['existe_déjà'] == 0) {
+        if ($institution['existe'] == 0) {
             if ($_POST['rue'] == "") {
                 echo "La rue de l'institution est manquante";
-                get_body_return_button($return_page);
+                get_body_return_button($page_de_retour);
                 return;
             }
 
@@ -253,7 +254,7 @@ EOT;
 
             if($_POST['pays'] == "") {
                 echo "Le pays de l'institution est manquant";
-                get_body_return_button($return_page);
+                get_body_return_button($page_de_retour);
                 return;
             }
             $ajouter_institution = true;
@@ -265,15 +266,15 @@ EOT;
                 $ajouter_provenance = true;
             } else {
                 echo "Une autre institution avec le même nom existe déjà, impossible d'ajouter cette institution";
-                get_body_return_button($return_page);
+                get_body_return_button($page_de_retour);
                 return;
             }
         }
     } else {
         if($_POST['nom'] != "") {
-            if($institution['existe_déjà'] == 0) {
+            if($institution['existe'] == 0) {
                 echo "L'institution de provenance n'existe pas";
-                get_body_return_button($return_page);
+                get_body_return_button($page_de_retour);
                 return;
             } else {
                 $ajouter_provenance = true;
@@ -287,7 +288,7 @@ EOT;
                                                                  ':date_naissance' => $date, ':n_enclos' => $_POST['n_enclos']));
     } catch (Exception $e) {
         echo "L'ajout de l'animal n'a pas fonctionné pour une raison inconnue.</br>";
-        get_body_return_button($return_page);
+        get_body_return_button($page_de_retour);
         return;
     }
 
@@ -297,7 +298,7 @@ EOT;
                                                                           ':pays' => $_POST['pays']));
         } catch (Exception $e) {
             echo "L'ajout de l'institution n'a pas fonctionné pour une raison inconnue.</br>";
-            get_body_return_button($return_page);
+            get_body_return_button($page_de_retour);
             return;
         }
     }
@@ -307,24 +308,30 @@ EOT;
             execute_sql_insert($bdd, 'e_ajoute_provenance.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'], ':nom_institution' => $_POST['nom']));
         } catch (Exception $e) {
             echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue.</br>";
-            get_body_return_button($return_page);
+            get_body_return_button($page_de_retour);
             return;
         }
     }
 
     echo "L'animal a été ajouté avec succès !</br>";
     echo "Voici un récapitulatif :</br>";
+    unset($_POST["avertissement_confirmé"]);
+    unset($_POST["institutionCheck"]);
     foreach ($_POST as $key => $value) {
-        if ($value != "" && $key != "avertissement_confirmé" && $key != "institutionCheck") {
-            echo $value . "</br>";
+        if ($value == "") {
+            unset($_POST[$key]);
         }
     }
+
+    $à_afficher = array(0 => $_POST);
+
+    affiche_tableau($à_afficher, "Récapitulatif de l'ajout");
 
 } else {
     header('Location: connexion.php');
 }
 
-    get_body_return_button($return_page);
+    get_body_return_button($page_de_retour);
 
     end_main();
     

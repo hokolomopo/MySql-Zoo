@@ -6,6 +6,7 @@ include 'overlay.php';
 include 'return_button.php';
 include 'db_connect.php';
 include 'print_table.php';
+include 'execute_sql.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']) {
     echo <<< EOT
@@ -46,16 +47,16 @@ EOT;
     }
     catch (Exception $e)
     {
-            die('Erreur : ' . $e->getMessage());
+        exit("Une erreur inattendue est survenue lors de la connexion à la base de donnée : " . $e->getMessage());
     }
 
-    $request = 'SELECT * FROM ' . $_POST['table'];
-    $first = true;
+    if(!array_key_exists('table', $_POST))
+        invalid_request();
+
+    $requête = 'SELECT * FROM ' . $_POST['table'];
+    $premier = true;
 
     foreach($_POST as $cle => $valeur){
-        
-        if(!array_key_exists('table', $_POST))
-            invalid_request();
 
         //empeche l'utilisateur de placer des balises html et donc d'exécuter du javascript
         $cle = htmlspecialchars($cle);
@@ -63,9 +64,7 @@ EOT;
 
         if($cle != 'table'){
 
-            $info_exe = $bdd->prepare(file_get_contents('get_db_information.sql'));
-            $info_exe -> execute(array(':table' => $_POST['table'], ':column' => $cle));
-            $info = $info_exe -> fetchAll();
+            $info = execute_sql_classique($bdd, 'get_db_information.sql', array(':table' => $_POST['table'], ':column' => $cle));
 
             $nb_elem = count($info);
 
@@ -74,11 +73,12 @@ EOT;
 
             if($valeur != null){
 
-                //check data validity
+                //Vérifie la validité des données
                 $type = $info[0]['data_type'];
                 $valeur_is_string = false;
                 switch($type){
 
+                    //le code du case varchar sera exécuté dans le case char
                     case 'char':
                     case 'varchar':
                         
@@ -117,53 +117,42 @@ EOT;
                         break;
 
                     default:
-                        exit("erreur serveur, le type de donnée de " . $cle . " n\'est pas géré par le serveur");
+                        exit("erreur serveur, le type de donnée de " . $cle . " n'est pas géré par le serveur");
                 }
 
                 if($valeur_is_string){
                     $eq_operateur = "like";
-                    $end_operateur = "%";
+                    $opérateur_de_début = "%";
+                    $opérateur_de_fin = "%";
                 }
                 else{
                     $eq_operateur = "=";
-                    $end_operateur = "";
+                    $opérateur_de_début = "";
+                    $opérateur_de_fin = "";
                 }
 
-                if($first){
-                    $request = $request . " where " . $cle . " " . $eq_operateur . " '" . $valeur . $end_operateur . "'";
-                    $first = false;
+                if($premier){
+                    $requête = $requête . " where " . $cle . " " . $eq_operateur . " \"" . $opérateur_de_début . $valeur . $opérateur_de_fin . "\"";
+                    $premier = false;
                 }
                 else{
-                    $request = $request . " and " . $cle . " " . $eq_operateur . " '" . $valeur . $end_operateur . "'";
+                    $requête = $requête . " where " . $cle . " " . $eq_operateur . " \"" . $opérateur_de_début . $valeur . $opérateur_de_fin . "\"";
                 }
             }
         }
     }
 
-    $request = $request . ";"; 
+    $requête = $requête . ";";
 
-    $executable = $bdd->prepare($request);
+    $résultat = execute_requête_string($bdd, $requête, null);
 
-    $executable->execute();
-
-    $result = $executable->fetchAll();
-
-    if(count($result) == 0)
-        echo "Pas de résultats </br>";
+    if(count($résultat) == 0)
+        echo "Pas de résultats. </br>";
 
     else{
         echo "Voici le résultat de la requête: </br></br>";
 
-        echo '<table>';
-
-        print_key_line($result[0]);
-
-        foreach($result as $data)
-        {
-            print_value_line($data);
-        }    
-
-        echo '</table>';
+        affiche_tableau($résultat, $_POST['table']);
     }
 
     echo '</br>';
