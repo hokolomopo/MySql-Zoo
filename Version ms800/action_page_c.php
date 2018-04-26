@@ -5,6 +5,7 @@ session_start();
 include 'overlay.php';
 include 'return_button.php';
 include 'db_connect.php';
+include 'print_table.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     echo <<< EOT
@@ -20,6 +21,8 @@ EOT;
     get_style_overlay();
 
     get_style_return_button();
+
+    get_style_table();
 
     echo <<< EOT
 
@@ -43,17 +46,28 @@ EOT;
 
     $executable = $bdd->prepare(file_get_contents('c_techniciens.sql'));
     $executable->execute();
-    echo "Les techniciens qui ont travaillé dans l'ensemble des enclos du parc animalier sont:</br>";
-    echo "Numéro de registre / Nom / Prénom</br></br>";
 
-    $fetch_resultat = $executable->fetch();
-    while ($fetch_resultat) {
-        for ($x = 0; $x < count($fetch_resultat)/2; $x++) { //division par 2 car les éléments sont duppliqués dans le fetch().
-            echo $fetch_resultat[$x] . "\t";
-        }
-        echo "</br>";
-        $fetch_resultat = $executable->fetch();
+    $result = $executable->fetchAll();
+
+    if(count($result) == 0)
+        echo "Pas de résultats </br>";
+
+    else{
+        echo "Les techniciens qui ont travaillé dans l'ensemble des enclos du parc animalier sont:</br></br>";
+    
+        echo '<table>';
+
+        print_key_line($result[0]);
+
+        foreach($result as $data)
+        {
+            print_value_line($data);
+        }    
+
+        echo '</table>';
     }
+
+    echo "</br>";
 
     get_body_return_button('page_c.php');
 

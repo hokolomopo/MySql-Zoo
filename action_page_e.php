@@ -231,7 +231,8 @@ EOT;
     $ajouter_institution = false;
     $ajouter_provenance = false;
 
-    $institution = (execute_sql_classique($bdd, 'e_institution_existe_déjà.sql', array('nom' => $_POST['nom'])))[0];
+    $institution_tmp = execute_sql_classique($bdd, 'e_institution_existe_déjà.sql', array(':nom' => $_POST['nom']));
+    $institution = $institution_tmp[0];
 
     //Il faut ajouter une nouvelle institution
     if (isset($_POST['institutionCheck']) == 1) {

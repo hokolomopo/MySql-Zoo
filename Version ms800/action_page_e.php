@@ -231,7 +231,8 @@ EOT;
     $ajouter_institution = false;
     $ajouter_provenance = false;
 
-    $institution = (execute_sql_classique($bdd, 'e_institution_existe_déjà.sql', array('nom' => $_POST['nom'])))[0];
+    $institution_tmp = execute_sql_classique($bdd, 'e_institution_existe_déjà.sql', array(':nom' => $_POST['nom']));
+    $institution = $institution_tmp[0];
 
     //Il faut ajouter une nouvelle institution
     if (isset($_POST['institutionCheck']) == 1) {
@@ -241,7 +242,7 @@ EOT;
             return;
         }
 
-        if ($institution['existe_déjà'] == 0) {
+        if ($institution['existe'] == 0) {
             if ($_POST['rue'] == "") {
                 echo "La rue de l'institution est manquante";
                 get_body_return_button($return_page);
@@ -270,7 +271,7 @@ EOT;
         }
     } else {
         if($_POST['nom'] != "") {
-            if($institution['existe_déjà'] == 0) {
+            if($institution['existe'] == 0) {
                 echo "L'institution de provenance n'existe pas";
                 get_body_return_button($return_page);
                 return;

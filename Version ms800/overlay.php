@@ -110,7 +110,7 @@ function get_body_overlay()
     <div class="sidenav">
         <ul >
             <li class="hoverable">
-                <a href="accueil.html" class="link">Acceuil</a>
+                <a href="accueil.php" class="link">Acceuil</a>
             </li>
                 <li class="dropdown hoverable"> 
                 <a href="#" class="link" >Services</a>
