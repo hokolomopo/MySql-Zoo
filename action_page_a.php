@@ -5,6 +5,7 @@ session_start();
 include 'overlay.php';
 include 'return_button.php';
 include 'db_connect.php';
+include 'print_table.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']) {
     echo <<< EOT
@@ -20,6 +21,8 @@ EOT;
     get_style_overlay();
 
     get_style_return_button();
+
+    get_style_table();
 
     echo <<< EOT
 
@@ -143,30 +146,26 @@ EOT;
 
     $executable->execute();
 
-    $resultat = $executable->fetchAll();
+    $result = $executable->fetchAll();
 
-    if(count($resultat) == 0)
-        exit("Pas de résultats </br>");
+    if(count($result) == 0)
+        echo "Pas de résultats </br>";
 
-    echo "Voici le résultat de la requête: </br>";
+    else{
+        echo "Voici le résultat de la requête: </br>";
 
-    $i = 1;
-    foreach($resultat as $donnees){
-        echo "</br>";
-        if($i == 1){
-            echo "1er resultat: </br>";
-        }
-        else{
-            echo $i . " ème resultat: </br>";
-        }
-        echo "</br>";
-        foreach($donnees as $champ => $valeur){
-            if(is_string($champ))
-                echo $champ . " = " . $valeur . "</br>";
-        }
-        $i++;
+        echo '<table>';
+
+        print_key_line($result[0]);
+
+        foreach($result as $data)
+        {
+            print_value_line($data);
+        }    
+
+        echo '</table>';
     }
-    
+
     echo '</br>';
     
     get_body_return_button('page_a.php');
