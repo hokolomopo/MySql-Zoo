@@ -2,7 +2,7 @@
 
 session_start();
 
-$_SESSION['lastVisited'] = 'page_b.php';
+$_SESSION['lastVisited'] = $_SERVER['REQUEST_URI'];
 
 include 'overlay.php';
 

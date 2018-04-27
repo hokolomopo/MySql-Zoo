@@ -2,6 +2,7 @@
 session_start(); 
 
 include 'overlay.php';
+include 'db_connect.php';
 ?>
 
 <!DOCTYPE html>
@@ -70,10 +71,7 @@ p{
 get_body_overlay();
 begin_main();
 
-$right_uname = "group24";
-$right_password = "8g7F9dhUCX";
-
-$returnLocation = 'menu.php';
+$returnLocation = 'accueil.php';
 if(isset($_SESSION['lastVisited']))
     $returnLocation = $_SESSION['lastVisited'];
 
@@ -81,13 +79,24 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     header('Location: ' . $returnLocation);
 }
 
-elseif(array_key_exists('uname', $_POST) and array_key_exists('password', $_POST) and htmlspecialchars($_POST['uname']) == $right_uname and htmlspecialchars($_POST['password']) == $right_password){
-
-    $_SESSION['connected'] = true;
-    header('Location: ' . $returnLocation);
-}
-
 else{
+    $idSuccess = false;
+    if(array_key_exists('uname', $_POST) and array_key_exists('password', $_POST)){
+        try{
+            new PDO(get_pdo_path(), htmlspecialchars($_POST['uname']), htmlspecialchars($_POST['password']));
+            $idSuccess = true;
+        }
+        catch(PDOException $e){}
+    }
+
+    if($idSuccess){
+        $_SESSION['connected'] = true;
+        $_SESSION['uname'] = $_POST['uname'];
+        $_SESSION['password'] = $_POST['password'];
+        header('Location: ' . $returnLocation);
+    }
+
+    else{
     echo <<< EOT
             <div class="form">
             <form action="connexion.php" method="post">
@@ -102,6 +111,7 @@ else{
             </form>
             </div>
 EOT;
+    }
 }
 
 end_main();

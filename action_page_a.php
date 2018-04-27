@@ -47,15 +47,14 @@ EOT;
     }
     catch(Exception $e)
     {
-
         header('Location: connexion.php');
     }
 
     if(!array_key_exists('table', $_POST))
-            invalid_request();
+        invalid_request();
         
-    $request = 'SELECT * FROM ' . $_POST['table'];
-    $first = true;
+    $requête = 'SELECT * FROM ' . $_POST['table'];
+    $premier = true;
 
     foreach($_POST as $cle => $valeur){
 

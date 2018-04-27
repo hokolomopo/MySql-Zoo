@@ -38,12 +38,17 @@ EOT;
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), get_pdo_user(), get_pdo_password());
+        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
     }
-    catch (Exception $e)
+    catch(Exception $e)
     {
-        exit("Une erreur inattendue est survenue lors de la connexion à la base de donnée : " . $e->getMessage());
+        header('Location: connexion.php');
     }
+
+      $résultats = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = 'Animal' AND table_schema='group24'", null);
+
+  print_r($résultats);
+
 
     $résultats = execute_sql_classique($bdd, "b_tri_animaux.sql", null);
 
@@ -51,9 +56,7 @@ EOT;
         echo "Pas de résultats </br>";
 
     else{
-        echo "Voici la liste, triée par le nombre de vétérinaires différents étant intervenus au moins une fois sur eux, des animaux:</br></br>";
-
-        affiche_tableau($résultats, "Animaux");
+        affiche_tableau($résultats, "Liste des animaux, triée par le nombre de vétérinaires différents étant intervenus au moins une fois sur eux");
     }
 
     echo "</br>";

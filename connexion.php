@@ -71,7 +71,7 @@ p{
 get_body_overlay();
 begin_main();
 
-$returnLocation = 'menu.php';
+$returnLocation = 'accueil.php';
 if(isset($_SESSION['lastVisited']))
     $returnLocation = $_SESSION['lastVisited'];
 

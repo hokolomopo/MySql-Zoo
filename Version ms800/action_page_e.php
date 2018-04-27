@@ -90,13 +90,14 @@ EOT;
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), get_pdo_user(), get_pdo_password());
-        $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
     }
     catch (Exception $e)
     {
-        exit("Une erreur inattendue est survenue lors de la connexion à la base de donnée : " . $e->getMessage());
+        header('Location: connexion.php');
     }
+
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     //Les variables sont set même si l'utilisateur n'a rien n'écrit dans le formulaire
     if (!isset($_POST['avertissement_confirmé']) || !isset($_POST['nom_scientifique']) || !isset($_POST['n_puce']) ||

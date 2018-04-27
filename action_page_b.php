@@ -45,15 +45,18 @@ EOT;
         header('Location: connexion.php');
     }
 
+      $résultats = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = 'Animal' AND table_schema='group24'", null);
+
+  print_r($résultats);
+
+
     $résultats = execute_sql_classique($bdd, "b_tri_animaux.sql", null);
 
     if(count($résultats) == 0)
         echo "Pas de résultats </br>";
 
     else{
-        echo "Voici la liste, triée par le nombre de vétérinaires différents étant intervenus au moins une fois sur eux, des animaux:</br></br>";
-
-        affiche_tableau($résultats, "Animaux");
+        affiche_tableau($résultats, "Liste des animaux, triée par le nombre de vétérinaires différents étant intervenus au moins une fois sur eux");
     }
 
     echo "</br>";

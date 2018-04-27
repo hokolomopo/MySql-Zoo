@@ -2,9 +2,11 @@
 
 session_start();
 
-$_SESSION['lastVisited'] = 'page_a.php';
+$_SESSION['lastVisited'] = $_SERVER['REQUEST_URI'];
 
 include 'overlay.php';
+include 'db_connect.php';
+include 'execute_sql.php';
 
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     echo <<< EOT
@@ -91,6 +93,62 @@ get_body_overlay();
 
 begin_main();
 
+/*Cette fonction doit être utilisée à l'intérieur d'un <select>. Si c'est le cas, elle ajoutera une option à cette liste.
+* L'argument est le nom de l'option.*/
+function ajoute_option_table($nom_option) {
+  echo "<option value='" . $nom_option . "' onclick='afficheContraintes(" . $nom_option . ")'>" . $nom_option . "</option>";
+}
+
+/*Cette fonction doit être utilisée à l'intérieur d'une liste. Si c'est le cas, elle y ajoutera un input de type texte et de nom $nom.
+* Une checkbox sera également ajoutée. Elle sera cochée par défaut, et elle renverra à la fonction $checkbox_cochée passée en argument, en cas de clique.
+* Si $nom contient des underscores, ils seront remplacés par des espaces pour l'affichage à l'écran.
+* De même, une majuscule est ajoutée au début de $nom lors de l'affichage.*/
+function ajoute_input($nom, $checkbox_cochée) {
+  $nom_affichage = str_replace("_", " ", $nom);
+  $nom_affichage = strtoupper(substr($nom_affichage, 0, 1)) . substr($nom_affichage, 1);
+  $echo = "<li><label for='" . $nom . "'>" . $nom_affichage . "</label>";
+  $echo .= "<input type='checkbox' name='test' checked='true' onclick='" . $checkbox_cochée . "'";
+  echo $echo;
+  $echo = "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "'></li>";
+  echo $echo;
+}
+
+
+  try
+  {
+      $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
+  }
+  catch(Exception $e)
+  {
+      header('Location: connexion.php');
+  }
+
+  //Initialise $noms_tables: un tableau contenant le nom de toutes les tables présentes dans la base de donnée.
+  $noms_tables_tmp = execute_requête_string($bdd, "SELECT DISTINCT table_name FROM information_schema.columns WHERE table_schema=\"" . get_dbname() . "\"", null);
+
+  $noms_tables = array();
+  $i = 0;
+  foreach ($noms_tables_tmp as $valeur) {
+    $noms_tables[$i] = $valeur['table_name'];
+    $i++;
+  }
+
+  //Initialise $tables: un tableau ayant comme clé le nom des tables et comme valeur associée un tableau contenant leurs colonnes respectives.
+  $tables = array();
+  foreach ($noms_tables as $table) {
+    $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $table . "' AND table_schema='" . get_dbname() . "'", null);
+
+    $i = 0;
+    $colonnes = array();
+    foreach ($colonnes_tmp as $valeur) {
+      $colonnes[$i] = $valeur['column_name'];
+      $i++;
+    }
+    $tables[$table] = $colonnes;
+  }
+
+
+//Crée une liste permettant la sélection de la table
 echo <<< EOT
 
   <p> Vous pouvez ici choisir une table à afficher, avec éventuellement des contraintes. </p>
@@ -98,29 +156,30 @@ echo <<< EOT
   <form action="action_page_a.php" method="post">
     <label for="table">Table</label>
     <select id="table" name="table">
-      <option value="Institution" onclick="afficheContraintes('institution')">Institution</option>
-      <option value="Espece" onclick="afficheContraintes('espece')">Espèce</option>
-      <option value="Animal" onclick="afficheContraintes('animal')">Animal</option>
-      <option value="Climat" onclick="afficheContraintes('climat')">Climat</option>
-      <option value="Enclos" onclick="afficheContraintes('enclos')">Enclos</option>
-      <option value="Materiel" onclick="afficheContraintes('materiel')">Materiel</option>
-      <option value="Personne" onclick="afficheContraintes('personne')">Personne</option>
-      <option value="Veterinaire" onclick="afficheContraintes('veterinaire')">Vétérinaire</option>
-      <option value="Technicien" onclick="afficheContraintes('technicien')">Technicien</option>
-      <option value="Intervention" onclick="afficheContraintes('intervention')">Intervention</option>
-      <option value="Entretien" onclick="afficheContraintes('entretien')">Entretien</option>
-      <option value="Provenance" onclick="afficheContraintes('provenance')">Provenance</option>
+EOT;
+
+    foreach ($noms_tables as $table) {
+      ajoute_option_table($table);
+    }
+
+echo <<< EOT
     </select>
 
     <ul class="test1" id="list1">
-      <li><label for="champ">Nom</label>
+EOT;
+      foreach ($tables[$noms_tables[0]] as $colonne) {
+        ajoute_input($colonne, "checkbox_cochée()");
+        //echo "<input type='text' id='nom' name='nom' placeholder='Nom'></li>";
+      }
+      /*<li><label for="champ">Nom</label>
           <input type="text" id="nom" name="nom" placeholder="Nom"></li>
       <li><label for="champ">Rue</label>
           <input type="text" id="rue" name="rue" placeholder="Rue"></li>
       <li><label for="champ">Code postal</label>
           <input type="text" id="code_postal" name="code_postal" placeholder="Code postal"></li>
       <li><label for="champ">Pays</label>
-          <input type="text" id="pays" name="pays" placeholder="Pays"></li>
+          <input type="text" id="pays" name="pays" placeholder="Pays"></li>*/
+  echo <<< EOT
     </ul>
 
     <input type="submit" value="Soumettre">
@@ -133,11 +192,16 @@ end_main();
 echo <<< EOT
      
 <script>
-    function afficheContraintes(x) {
+    function checkbox_cochée() {
+      console.log("j'suis là ! ");
+    }
+
+
+    function afficheContraintes(table_sélectionnée) {
         var list = document.getElementById("list1");
         list.innerHTML = "";
-        switch (x) {
-        case "institution":
+        switch (table_sélectionnée) {
+        case "Institution":
             list.innerHTML += '<li><label for="champ">Nom</label>' + 
                               '<input type="text" id="nom" name="nom" placeholder="Nom"></li>';
             list.innerHTML += '<li><label for="champ">Rue</label>' + 
@@ -148,7 +212,7 @@ echo <<< EOT
                               '<input type="text" id="pays" name="pays" placeholder="Pays"></li>';
             break;
 
-        case "espece":
+        case "Espece":
             list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
                               '<input type="text" id="nom_scientifique" name="nom_scientifique" placeholder="Nom scientifique"></li>';
             list.innerHTML += '<li><label for="champ">Nom courant</label>' + 
@@ -157,7 +221,7 @@ echo <<< EOT
                               '<input type="text" id="regime_alimentaire" name="regime_alimentaire" placeholder="Régime alimentaire"></li>';
             break;
 
-        case "animal":
+        case "Animal":
             list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
                               '<input type="text" id="nom_scientifique" name="nom_scientifique" placeholder="Nom scientifique"></li>';
             list.innerHTML += '<li><label for="champ">Numéro de puce</label>' + 
@@ -172,14 +236,14 @@ echo <<< EOT
                               '<input type="text" id="n_enclos" name="n_enclos" placeholder="numéro de l\'enclos"></li>';
             break;
 
-        case "climat":
+        case "Climat":
             list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
                               '<input type="text" id="nom_scientifique" name="nom_scientifique" placeholder="Nom scientifique"></li>';
             list.innerHTML += '<li><label for="champ">Nom du climat</label>' + 
                               '<input type="text" id="nom_climat" name="nom_climat" placeholder="Nom du climat"></li>';
             break;
 
-        case "enclos":
+        case "Enclos":
             list.innerHTML += '<li><label for="champ">Numéro de l\'enclos</label>' + 
                               '<input type="text" id="n_enclos" name="n_enclos" placeholder="Numéro de l\'enclos"></li>';
             list.innerHTML += '<li><label for="champ">Nom du climat</label>' + 
@@ -188,7 +252,7 @@ echo <<< EOT
                               '<input type="text" id="taille" name="taille" placeholder="Taille"></li>';
             break;
 
-        case "materiel":
+        case "Materiel":
             list.innerHTML += '<li><label for="champ">Numéro du matériel</label>' + 
                               '<input type="text" id="n_materiel" name="n_materiel" placeholder="Numéro du matériel"></li>';
             list.innerHTML += '<li><label for="champ">État</label>' + 
@@ -197,7 +261,7 @@ echo <<< EOT
                               '<input type="text" id="local" name="local" placeholder="Local"></li>';
             break;
 
-        case "personne":
+        case "Personne":
             list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
                               '<input type="text" id="n_registre" name="n_registre" placeholder="Numéro de registre"></li>';
             list.innerHTML += '<li><label for="champ">Nom</label>' + 
@@ -206,7 +270,7 @@ echo <<< EOT
                               '<input type="text" id="prenom" name="prenom" placeholder="Prénom"></li>';
             break;
 
-        case "veterinaire":
+        case "Veterinaire":
             list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
                               '<input type="text" id="n_registre" name="n_registre" placeholder="Numéro de registre"></li>';
             list.innerHTML += '<li><label for="champ">Numéro de license</label>' + 
@@ -215,12 +279,12 @@ echo <<< EOT
                               '<input type="text" id="specialite" name="specialite" placeholder="Spécialité"></li>';
             break;
 
-        case "technicien":
+        case "Technicien":
             list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
                               '<input type="text" id="n_registre" name="n_registre" placeholder="Numéro de registre"></li>';
             break;
 
-        case "intervention":
+        case "Intervention":
             list.innerHTML += '<li><label for="champ">Numéro de l\'intervention</label>' + 
                               '<input type="text" id="n_intervention" name="n_intervention" placeholder="Numéro de l\'intervention"></li>';
             list.innerHTML += '<li><label for="champ">Date de l\'intervention</label>' + 
@@ -235,7 +299,7 @@ echo <<< EOT
                               '<input type="text" id="n_puce" name="n_puce" placeholder="Numéro de puce"></li>';
             break;
 
-        case "entretien":
+        case "Entretien":
             list.innerHTML += '<li><label for="champ">Numéro de l\'entretien</label>' + 
                               '<input type="text" id="n_entretien" name="n_entretien" placeholder="Numéro de l\'entretien"></li>';
             list.innerHTML += '<li><label for="champ">Numéro de registre</label>' + 
@@ -248,7 +312,7 @@ echo <<< EOT
                               '<input type="text" id="n_enclos" name="n_enclos" placeholder="Numéro de l\'enclos"></li>';
             break;
 
-        case "provenance":
+        case "Provenance":
             list.innerHTML += '<li><label for="champ">Nom scientifique</label>' + 
                               '<input type="text" id="nom_scientifique" name="nom_scientifique" placeholder="Nom scientifique"></li>';
             list.innerHTML += '<li><label for="champ">Numéro de puce</label>' + 
