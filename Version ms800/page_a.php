@@ -116,7 +116,6 @@ function ajoute_input($nom) {
   return $ret;
 }
 
-
   try
   {
       $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
@@ -138,7 +137,6 @@ function ajoute_input($nom) {
   }
 
 
-  $INDEX_COURANT = 0;
   //Initialise $tableau_contraintes: un tableau ayant comme clé le nom des tables et comme valeur une chaîne de caractère représentant le code HTML des <input> associés à cette table.
   $j = 0;
   $tableau_contraintes = array();
@@ -152,6 +150,8 @@ function ajoute_input($nom) {
       $i++;
     }
 
+    //L'index est relatif à chaque table étant donné que l'on en affiche qu'une à la fois
+    $INDEX_COURANT = 0;
     $contrainte = "";
     foreach ($colonnes as $colonne) {
       $contrainte .= ajoute_input($colonne);
@@ -172,6 +172,33 @@ function ajoute_input($nom) {
       $tableau_contraintes_JS .= "\", \"";
     }
   }
+
+echo <<< EOT
+     
+<script>
+EOT;
+    //Ne pas regarder le code source de la page une fois le php compilé... 
+    echo $tableau_contraintes_JS;
+
+echo <<< EOT
+    function checkbox_cochée(checkbox_index, input_index) {
+      var tableau_input = document.getElementsByClassName("input");
+      var checkbox = tableau_input[checkbox_index];
+      var input = tableau_input[input_index];
+
+      if (checkbox.checked == true) {
+        input.readOnly= false;
+      } else {
+        input.value="";
+        input.readOnly= true;
+      }
+    }
+
+    function afficheContraintes(table_sélectionnée) {
+        document.getElementById("liste_contraintes").innerHTML = à_afficher[table_sélectionnée];
+    }
+</script>
+EOT;
 
 
 //Crée une liste permettant la sélection de la table
@@ -196,7 +223,11 @@ echo <<< EOT
     <ul class="test1" id="liste_contraintes">
 EOT;
 
-    echo $tableau_contraintes[0];
+    if (array_key_exists(0, $tableau_contraintes)) {
+      echo "<script>afficheContraintes(0)</script>";
+    } else {
+      echo "<script>document.getElementById('liste_contraintes').innerHTML = ''";
+    }
 
   echo <<< EOT
     </ul>
@@ -209,29 +240,6 @@ EOT;
 end_main();
 
 echo <<< EOT
-     
-<script>
-    function checkbox_cochée(checkbox_index, input_index) {
-      var tableau_input = document.getElementsByClassName("input");
-      var checkbox = tableau_input[checkbox_index];
-      var input = tableau_input[input_index];
-
-      if (checkbox.checked == true) {
-        input.readOnly= false;
-      } else {
-        input.value="";
-        input.readOnly= true;
-      }
-    }
-EOT;
-    //Ne pas regarder le code source de la page une fois le php compilé... 
-    echo $tableau_contraintes_JS;
-echo <<< EOT
-
-    function afficheContraintes(table_sélectionnée) {
-        document.getElementById("liste_contraintes").innerHTML = à_afficher[table_sélectionnée];
-    }
-</script>
 
 </body>
 </html> 
