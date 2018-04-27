@@ -37,11 +37,11 @@ EOT;
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), get_pdo_user(), get_pdo_password());
+        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
     }
-    catch (Exception $e)
+    catch(Exception $e)
     {
-        die('Erreur : ' . $e->getMessage());
+        header('Location: connexion.php');
     }
 
     $executable = $bdd->prepare(file_get_contents('b_tri_animaux.sql'));

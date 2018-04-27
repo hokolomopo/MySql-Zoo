@@ -42,20 +42,22 @@ EOT;
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), get_pdo_user(), get_pdo_password());
+        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
     }
-    catch (Exception $e)
+    catch(Exception $e)
     {
-            die('Erreur : ' . $e->getMessage());
+        header('Location: connexion.php');
     }
 
+    if(!array_key_exists('table', $_POST))
+            invalid_request();
+        
     $request = 'SELECT * FROM ' . $_POST['table'];
     $first = true;
 
     foreach($_POST as $cle => $valeur){
         
-        if(!array_key_exists('table', $_POST))
-            invalid_request();
+        
 
         //empeche l'utilisateur de placer des balises html et donc d'exécuter du javascript
         $cle = htmlspecialchars($cle);

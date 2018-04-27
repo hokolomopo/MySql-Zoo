@@ -2,7 +2,7 @@
 
 session_start();
 
-$_SESSION['lastVisited'] = 'page_b.php';
+$_SESSION['lastVisited'] = 'page_e.php';
 
 include 'overlay.php';
 
