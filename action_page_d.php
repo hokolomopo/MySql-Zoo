@@ -35,11 +35,11 @@ EOT;
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), get_pdo_user(), get_pdo_password());
+        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
     }
-    catch (Exception $e)
+    catch(Exception $e)
     {
-        exit("Une erreur inattendue est survenue lors de la connexion à la base de donnée : " . $e->getMessage());
+        header('Location: connexion.php');
     }
 
     $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);

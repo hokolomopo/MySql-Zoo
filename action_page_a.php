@@ -43,18 +43,19 @@ EOT;
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), get_pdo_user(), get_pdo_password());
+        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
     }
-    catch (Exception $e)
+    catch(Exception $e)
     {
-        exit("Une erreur inattendue est survenue lors de la connexion à la base de donnée : " . $e->getMessage());
+
+        header('Location: connexion.php');
     }
 
     if(!array_key_exists('table', $_POST))
-        invalid_request();
-
-    $requête = 'SELECT * FROM ' . $_POST['table'];
-    $premier = true;
+            invalid_request();
+        
+    $request = 'SELECT * FROM ' . $_POST['table'];
+    $first = true;
 
     foreach($_POST as $cle => $valeur){
 
