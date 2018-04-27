@@ -97,6 +97,13 @@ function get_style_overlay()
     .hoverable2 a{
         padding-left: 10px;
     }
+
+    .menu_arrow{
+    width:15px;
+    height: 20px;
+    padding-left: 37px;
+}
+
 EOT;
 }
 
@@ -114,6 +121,7 @@ function get_body_overlay()
             </li>
                 <li class="dropdown hoverable"> 
                 <a href="#" class="link" >Services</a>
+                <img src="menu_arrow.png" class="menu_arrow">
                 <ul class="dropdown-content">
                     <li class="hoverable2">
                         <a href="page_a.php" class="link2">Question a</a>
