@@ -36,6 +36,8 @@ EOT;
 
     begin_main();
 
+    print_r($_POST);
+
     function invalid_request()
     {
          exit("requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.");

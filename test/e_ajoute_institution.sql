@@ -1,0 +1,1 @@
+Insert into Institution Values(:nom, :rue, :code_postal, :pays);
