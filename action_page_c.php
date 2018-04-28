@@ -50,10 +50,8 @@ EOT;
     if(count($résultats) == 0)
         echo "Pas de résultats </br>";
 
-    else{
-        echo "Les techniciens qui ont travaillé dans l'ensemble des enclos du parc animalier sont:</br></br>";
-    
-        affiche_tableau($résultats, "Techniciens");
+    else{    
+        affiche_tableau($résultats, "Liste des techniciens ayant travaillé dans l'ensemble des enclos du parc animalier");
     }
 
     echo "</br>";
