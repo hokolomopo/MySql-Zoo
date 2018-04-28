@@ -42,15 +42,26 @@ EOT;
         header('Location: connexion.php');
     }
 
-    $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $page_de_retour = "page_d.php";
+
+    try {
+        $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);
+    } catch (Exception $e) {
+        echo "La requête n'a pas pu être exécutée pour une raison inconnue, la table n'existe peut être pas";
+        get_body_return_button($page_de_retour);
+        exit(1);
+    }
+
     $proportion = $résultats[0]['proportion'];
 
-    echo "La proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat";
+    echo "La proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat ";
     echo "ne correspond pas à l'un de ceux supportés par son espèce est de:</br>";
     echo doubleval($proportion)*100;
     echo "%";
 
-    get_body_return_button('page_d.php');
+    get_body_return_button($page_de_retour);
 
     end_main();
 

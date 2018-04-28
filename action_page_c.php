@@ -45,7 +45,17 @@ EOT;
         header('Location: connexion.php');
     }
 
-    $résultats = execute_sql_classique($bdd, "c_techniciens.sql", null);
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $page_de_retour = "page_c.php";
+
+    try {
+        $résultats = execute_sql_classique($bdd, "c_techniciens.sql", null);
+    } catch (Exception $e) {
+        echo "La requête n'a pas pu être exécutée pour une raison inconnue, la table n'existe peut être pas";
+        get_body_return_button($page_de_retour);
+        exit(1);
+    }
 
     if(count($résultats) == 0)
         echo "Pas de résultats </br>";
@@ -56,7 +66,7 @@ EOT;
 
     echo "</br>";
 
-    get_body_return_button('page_c.php');
+    get_body_return_button($page_de_retour);
 
     end_main();
 
