@@ -106,13 +106,29 @@ function ajoute_option_table($nom_option, $numéro_index) {
 function ajoute_input($nom) {
   $nom_affichage = str_replace("_", " ", $nom);
   $nom_affichage = strtoupper(substr($nom_affichage, 0, 1)) . substr($nom_affichage, 1);
-  $index_cb = $GLOBALS['INDEX_COURANT'];
-  $index_input = $index_cb + 1;
-  $ret = "<li><label for='" . $nom . "'>" . $nom_affichage . "</label>";
-  $ret .= "<input type='checkbox' id='" . $nom . "_cb' name='" . $nom . "_cb' value='true' checked='true' onclick='checkbox_cochée(" . $index_cb . ", " . $index_input . ")' class='input'>";
-  $ret .= "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "...' class='input'></li>";
 
-  $GLOBALS['INDEX_COURANT'] = $GLOBALS['INDEX_COURANT'] + 2;
+  //réaffiche la dernière valeur de l'input
+  if(isset($_POST[$nom])) {
+    $valeur_initiale = $_POST[$nom];
+  } else {
+    $valeur_initiale = "";
+  }
+
+  //réaffiche le dernier état de la checkbox
+  if(isset($_POST[$nom . "_cb"])) {
+    if ($_POST[$nom . "_cb"] == "false") {
+      $checked = "";
+    } else {
+      $checked = "checked='true'";
+    }
+  //La valeur par défaut d'une checkbox est cochée
+  } else {
+    $checked = "checked='true'";
+  }
+
+  $ret = "<li><label for='" . $nom . "'>" . $nom_affichage . "</label>";
+  $ret .= "<input type='checkbox' id='" . $nom . "_cb' name='" . $nom . "_cb' value='true' " . $checked . ">";
+  $ret .= "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "...' value='" . $valeur_initiale . "'></li>";
   return $ret;
 }
 
@@ -140,6 +156,8 @@ function ajoute_input($nom) {
   //Initialise $tableau_contraintes: un tableau ayant comme clé le nom des tables et comme valeur une chaîne de caractère représentant le code HTML des <input> associés à cette table.
   $j = 0;
   $tableau_contraintes = array();
+  //$indexs prend comme clé le nom d'une table, et renvoie l'index associé à cette table dans $tableau_contraintes_JS
+  $indexs = array();
   foreach ($noms_tables as $table) {
     $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $table . "' AND table_schema='" . get_dbname() . "'", null);
 
@@ -150,27 +168,30 @@ function ajoute_input($nom) {
       $i++;
     }
 
-    //L'index est relatif à chaque table étant donné que l'on en affiche qu'une à la fois
-    $INDEX_COURANT = 0;
     $contrainte = "";
     foreach ($colonnes as $colonne) {
       $contrainte .= ajoute_input($colonne);
     }
+    $indexs[$table] = $j;
     $tableau_contraintes[$j] = $contrainte;
     $j++;
   }
 
   //Initialise $tableau_contraintes_JS: une chaîne de caractère représentant un tableau javascript contenant la même chose que $tableau_contraintes.
-  $tableau_contraintes_JS = "var à_afficher = [\"";
-  for ($i = 0; $i < count($tableau_contraintes); $i++) {
-    $tableau_contraintes_JS .= $tableau_contraintes[$i];
+  if(count($tableau_contraintes) != 0) {
+    $tableau_contraintes_JS = "var à_afficher = [\"";
+    for ($i = 0; $i < count($tableau_contraintes); $i++) {
+      $tableau_contraintes_JS .= $tableau_contraintes[$i];
 
-    //au dernier tour on ferme le crochet plutôt que de mettre une virgule
-    if ($i == count($tableau_contraintes) - 1) {
-      $tableau_contraintes_JS .= "\"];";
-    } else {
-      $tableau_contraintes_JS .= "\", \"";
+      //au dernier tour on ferme le crochet plutôt que de mettre une virgule
+      if ($i == count($tableau_contraintes) - 1) {
+        $tableau_contraintes_JS .= "\"];";
+      } else {
+        $tableau_contraintes_JS .= "\", \"";
+      }
     }
+  } else {
+    $tableau_contraintes_JS = "";
   }
 
 echo <<< EOT
@@ -181,19 +202,6 @@ EOT;
     echo $tableau_contraintes_JS;
 
 echo <<< EOT
-    function checkbox_cochée(checkbox_index, input_index) {
-      var tableau_input = document.getElementsByClassName("input");
-      var checkbox = tableau_input[checkbox_index];
-      var input = tableau_input[input_index];
-
-      if (checkbox.checked == true) {
-        input.readOnly= false;
-      } else {
-        input.value="";
-        input.readOnly= true;
-      }
-    }
-
     function afficheContraintes(table_sélectionnée) {
         document.getElementById("liste_contraintes").innerHTML = à_afficher[table_sélectionnée];
     }
@@ -204,7 +212,8 @@ EOT;
 //Crée une liste permettant la sélection de la table
 echo <<< EOT
 
-  <p> Vous pouvez ici choisir une table à afficher, avec éventuellement des contraintes. </p>
+  <p> Vous pouvez ici choisir une table à afficher, avec éventuellement des contraintes.</br>Vous pouvez sélectionner les colonnes pour l'affichage en cliquant sur la checkbox correspondante.</br>
+      Vous pouvez contraindre les valeurs d'une colonne même si vous ne l'avez pas sélectionnée.</p>
   <div class="form">
   <form action="action_page_a.php" method="post">
     <label for="table">Table</label>
@@ -217,16 +226,24 @@ EOT;
       $i++;
     }
 
+    if(isset($_POST['table']) && array_key_exists($_POST['table'], $indexs)) {
+      echo "<script>document.getElementById('table').value='" . $_POST['table'] . "'</script>\n";
+    }
+
 echo <<< EOT
     </select>
 
     <ul class="test1" id="liste_contraintes">
 EOT;
 
-    if (array_key_exists(0, $tableau_contraintes)) {
-      echo "<script>afficheContraintes(0)</script>";
+    if(isset($_POST['table']) && array_key_exists($_POST['table'], $indexs)) {
+        echo "<script>afficheContraintes(" . $indexs[$_POST['table']] . ")</script>";
     } else {
-      echo "<script>document.getElementById('liste_contraintes').innerHTML = ''";
+      if (array_key_exists(0, $tableau_contraintes)) {
+        echo "<script>afficheContraintes(0)</script>";
+      } else {
+        echo "<script>document.getElementById('liste_contraintes').innerHTML = ''";
+      }
     }
 
   echo <<< EOT

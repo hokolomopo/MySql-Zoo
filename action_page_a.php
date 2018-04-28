@@ -36,11 +36,11 @@ EOT;
 
     begin_main();
 
-    print_r($_POST);
-
     function invalid_request()
     {
-         exit("requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.");
+        echo "requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.";
+        get_body_return_button_with_post($page_de_retour, $_POST);
+        exit(1);
     }
 
     try
@@ -52,94 +52,139 @@ EOT;
         header('Location: connexion.php');
     }
 
+    $page_de_retour = "page_a.php";
+
+    //Empêche l'utilisateur de placer des balises html et donc d'exécuter du javascript
+    foreach ($_POST as $key => $value) {
+        $_POST[$key] = htmlspecialchars($_POST[$key]);
+    }
+
     if(!array_key_exists('table', $_POST))
         invalid_request();
-        
-    $requête = 'SELECT * FROM ' . $_POST['table'];
+
+    $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $_POST['table'] . "' AND table_schema='" . get_dbname() . "'", null);
+    if (count($colonnes_tmp) == 0) {
+        invalid_request();
+    }
+
+    $i = 0;
+    $colonnes = array();
+    foreach ($colonnes_tmp as $valeur) {
+      $colonnes[$i] = $valeur['column_name'];
+      $i++;
+    }
+
+
+    //Sélectionne les colonnes demandées par l'utilisateur
+    $requête = "SELECT ";
+    $colonne_trouvée = false;
+    foreach ($colonnes as $index => $nom_colonne) {
+        if (isset($_POST[$nom_colonne . "_cb"])) {
+            //il ne faut pas précéder le nom de la colonne par une virgule si c'est la première colonne
+            if($colonne_trouvée) {
+                $requête .= ", " . $nom_colonne;
+            } else {
+                $requête .= $nom_colonne;
+                $colonne_trouvée = true;
+            }
+        //C'est utile pour garder en mémoire l'état précédent de la checkbox, cf la fonction ajout_input de page_a.php.
+        } else {
+            $_POST[$nom_colonne . "_cb"] = "false";
+        }
+    }
+
+    $requête .= " FROM " . $_POST['table'];
+
+    if(!$colonne_trouvée) {
+        echo "Vous n'avez sélectionné aucune colonne.";
+        get_body_return_button_with_post($page_de_retour, $_POST);
+        exit(1);
+    }
+
     $premier = true;
 
-    foreach($_POST as $cle => $valeur){
+    foreach($colonnes as $nom_colonne){
 
-        //empeche l'utilisateur de placer des balises html et donc d'exécuter du javascript
-        $cle = htmlspecialchars($cle);
-        $valeur = htmlspecialchars($valeur);
+        if(!isset($_POST[$nom_colonne])) {
+            invalid_request();
+        }
 
-        if($cle != 'table'){
+        $info = execute_sql_classique($bdd, 'get_db_information.sql', array(':table' => $_POST['table'], ':column' => $nom_colonne));
 
-            $info = execute_sql_classique($bdd, 'get_db_information.sql', array(':table' => $_POST['table'], ':column' => $cle));
+        if($_POST[$nom_colonne] != null){
 
-            $nb_elem = count($info);
+            //Vérifie la validité des données
+            $type = $info[0]['data_type'];
+            $valeur_is_string = false;
+            switch($type){
 
-            if($nb_elem == 0)
-                invalid_request();
+                //le code du case varchar sera exécuté dans le case char
+                case 'char':
+                case 'varchar':
 
-            if($valeur != null){
+                    if(strlen($_POST[$nom_colonne]) > $info[0]['character_maximum_length'])
+                    {
+                        echo "le champ " . $nom_colonne . "doit contenir " . $info[0]['character_maximum_length'] . " caractères maximum.";
+                        get_body_return_button_with_post($page_de_retour, $_POST);
+                        exit(1);
+                    }
 
-                //Vérifie la validité des données
-                $type = $info[0]['data_type'];
-                $valeur_is_string = false;
-                switch($type){
+                    $valeur_is_string = true;
 
-                    //le code du case varchar sera exécuté dans le case char
-                    case 'char':
-                    case 'varchar':
-                        
-                        //it is anyway a string, we thus assert that what's inside is not a number
-                        $test_valeur = $valeur;
-                        if(substr($valeur, 0, 1) == "-")
-                            $test_valeur = substr($valeur, 1);
-                        
-                        if(ctype_digit($test_valeur))
-                            exit("le champ " . $cle . " doit contenir une chaine de caractère");
+                    break;
 
-                        if(strlen($valeur) > $info[0]['character_maximum_length'])
-                            exit("le champ " . $cle . "doit contenir " . $info[0]['character_maximum_length'] . " caractères maximum");
+                case 'datetime':
+                    
+                    if (!(preg_match('#^([0-9]{4}).([0-9]{2}).([0-9]{2})$#', $_POST[$nom_colonne], $date_tableau) == 1 && checkdate($date_tableau[2], $date_tableau[3], $date_tableau[1])))
+                    {
+                        echo "le format de " . $nom_colonne . " ne correspond pas au format attendu par le serveur.";
+                        get_body_return_button_with_post($page_de_retour, $_POST);
+                        exit(1);
+                    }
 
-                        $valeur_is_string = true;
+                    break;
 
-                        break;
+                case 'smallint':
+                case 'int':
 
-                    case 'datetime':
-                        
-                        if (!(preg_match('#^([0-9]{4}).([0-9]{2}).([0-9]{2})$#', $valeur, $date_tableau) == 1 && checkdate($date_tableau[2], $date_tableau[3], $date_tableau[1])))
-                            exit("le format de " . $cle . " ne correspond pas au format attendu par le serveur");
+                    $test_valeur = $_POST[$nom_colonne];
+                    if(substr($_POST[$nom_colonne], 0, 1) == "-")
+                        $test_valeur = substr($_POST[$nom_colonne], 1);
 
-                        break;
+                    if(!ctype_digit($test_valeur))
+                    {
+                        echo "le champ " . $nom_colonne . " doit contenir un entier.";
+                        get_body_return_button_with_post($page_de_retour, $_POST);
+                        exit(1);
+                    }
 
-                    case 'smallint':
-                    case 'int':
+                    break;
 
-                        $test_valeur = $valeur;
-                        if(substr($valeur, 0, 1) == "-")
-                            $test_valeur = substr($valeur, 1);
+                default:
+                    echo "erreur serveur, le type de donnée de " . $nom_colonne . " n'est pas géré par le serveur.";
+                    get_body_return_button_with_post($page_de_retour, $_POST);
+                    exit(1);
 
-                        if(!ctype_digit($test_valeur))
-                            exit("le champ " . $cle . " doit contenir un entier");
+                    break;
+            }
 
-                        break;
+            if($valeur_is_string){
+                $eq_operateur = "like";
+                $opérateur_de_début = "\"%";
+                $opérateur_de_fin = "%\"";
+            }
+            else{
+                $eq_operateur = "=";
+                $opérateur_de_début = "";
+                $opérateur_de_fin = "";
+            }
 
-                    default:
-                        exit("erreur serveur, le type de donnée de " . $cle . " n'est pas géré par le serveur");
-                }
-
-                if($valeur_is_string){
-                    $eq_operateur = "like";
-                    $opérateur_de_début = "%";
-                    $opérateur_de_fin = "%";
-                }
-                else{
-                    $eq_operateur = "=";
-                    $opérateur_de_début = "";
-                    $opérateur_de_fin = "";
-                }
-
-                if($premier){
-                    $requête = $requête . " where " . $cle . " " . $eq_operateur . " \"" . $opérateur_de_début . $valeur . $opérateur_de_fin . "\"";
-                    $premier = false;
-                }
-                else{
-                    $requête = $requête . " where " . $cle . " " . $eq_operateur . " \"" . $opérateur_de_début . $valeur . $opérateur_de_fin . "\"";
-                }
+            if($premier){
+                $requête .= " where " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin . "";
+                $premier = false;
+            }
+            else{
+                $requête = $requête . " and " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin . "";
             }
         }
     }
@@ -159,7 +204,7 @@ EOT;
 
     echo '</br>';
     
-    get_body_return_button('page_a.php');
+    get_body_return_button_with_post($page_de_retour, $_POST);
 
     end_main();
 

@@ -68,8 +68,6 @@ p{
 <body>
 
 <?php
-get_body_overlay();
-begin_main();
 
 $returnLocation = 'accueil.php';
 if(isset($_SESSION['lastVisited']))
@@ -97,7 +95,9 @@ else{
     }
 
     else{
-    echo <<< EOT
+        get_body_overlay();
+        begin_main();
+        echo <<< EOT
             <div class="form">
             <form action="connexion.php" method="post">
 
