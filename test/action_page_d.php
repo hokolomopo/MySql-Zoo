@@ -23,7 +23,11 @@ EOT;
     get_style_return_button();
 
     echo <<< EOT
-    
+    div.centré_verticalement {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
     </style>
     </head>
     <body>
@@ -32,6 +36,8 @@ EOT;
     get_body_overlay();
 
     begin_main();
+
+    echo "<center><div class='centré_verticalement'>"
 
     try
     {
@@ -42,19 +48,32 @@ EOT;
         header('Location: connexion.php');
     }
 
-    $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);
-    $proportion = $résultats[0]['proportion'];
+    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    echo "La proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat";
+    $page_de_retour = "page_d.php";
+
+    try {
+        $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);
+    } catch (Exception $e) {
+        echo "La requête n'a pas pu être exécutée pour une raison inconnue, la table n'existe peut être pas";
+        get_body_return_button($page_de_retour);
+        exit(1);
+    }
+
+    $proportion = $résultats[0]['proportion'];
+    $proportion = doubleval($proportion)*100;
+
+    echo "La proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat ";
     echo "ne correspond pas à l'un de ceux supportés par son espèce est de:</br>";
-    echo doubleval($proportion)*100;
+    echo $proportion;
     echo "%";
 
-    get_body_return_button('page_d.php');
+    get_body_return_button($page_de_retour);
 
     end_main();
 
     echo <<< EOT
+    </div></center>
     </body>
     </html>
 EOT;
