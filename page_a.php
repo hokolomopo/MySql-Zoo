@@ -213,7 +213,8 @@ EOT;
 echo <<< EOT
 
   <p> Vous pouvez ici choisir une table à afficher, avec éventuellement des contraintes.</br>Vous pouvez sélectionner les colonnes pour l'affichage en cliquant sur la checkbox correspondante.</br>
-      Vous pouvez contraindre les valeurs d'une colonne même si vous ne l'avez pas sélectionnée.</p>
+      Vous pouvez contraindre les valeurs d'une colonne même si vous ne l'avez pas sélectionnée.</br>
+      Pour les champs textuels, les tuples affichés seront ceux contenant la valeur indiquée.</br>Pour les champs numériques, seront affichés les tuples pour lesquels l'égalité est vérifiée.</br></p>
   <div class="form">
   <form action="action_page_a.php" method="post">
     <label for="table">Table</label>

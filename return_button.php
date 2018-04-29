@@ -52,4 +52,12 @@ function get_body_return_button($page)
     echo '<a href="' . $page . '"> <input type="button" value="Effectuer de nouveau la requête"> </a>';
 }
 
+/*Cette fonction renvoie un bouton permettant de rediriger à la page $page, le début de ce bouton ($gradient étant un pourcentage)
+* possède une couleur différente du reste, de telle sorte qu'il ressemble à une barre de chargement.*/
+function get_body_return_button_gradient($page, $gradient) {
+    $echo = '<a href="' . $page . '"> <input type="button" value="Effectuer de nouveau la requête"';
+    $echo .= ' style="background: linear-gradient(to right, blue 0%, blue ' . $gradient . '%, #4CAF50 ' . $gradient . '%, #4CAF50 100%);"> </a>';
+    echo $echo;
+}
+
 ?>
