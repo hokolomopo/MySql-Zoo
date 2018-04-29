@@ -39,7 +39,7 @@ EOT;
     function invalid_request()
     {
         echo "requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        get_body_return_button($GLOBALS['page_de_retour']);
         exit(1);
     }
 
@@ -102,6 +102,7 @@ EOT;
     }
 
     $premier = true;
+    $contraintes = "";
 
     foreach($colonnes as $nom_colonne){
 
@@ -180,11 +181,13 @@ EOT;
             }
 
             if($premier){
-                $requête .= " where " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin . "";
+                $contraintes .= $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin;
+                $requête .= " where " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin;
                 $premier = false;
             }
             else{
-                $requête = $requête . " and " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin . "";
+                $contraintes .= " ; " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin;
+                $requête .= " and " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin;
             }
         }
     }
@@ -197,9 +200,17 @@ EOT;
         echo "Pas de résultats. </br>";
 
     else{
-        echo "Voici le résultat de la requête: </br></br>";
+        $titre_tableau = "Liste des tuples de la table " . $_POST['table'];
+        if($contraintes != "") {
+            $contraintes = str_replace("like", "contient", $contraintes);
+            $contraintes = str_replace("%", "", $contraintes);
+            $contraintes = str_replace("\"", "", $contraintes);
+            $contraintes = str_replace("=", "vaut", $contraintes);
+            $titre_tableau .= ", avec les contraintes suivantes:</br>";
+            $titre_tableau .= $contraintes;
+        }
 
-        affiche_tableau($résultat, $_POST['table']);
+        affiche_tableau($résultat, $titre_tableau);
     }
 
     echo '</br>';

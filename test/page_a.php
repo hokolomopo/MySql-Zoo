@@ -99,8 +99,8 @@ function ajoute_option_table($nom_option, $numéro_index) {
   echo "<option value='" . $nom_option . "' onclick=\"afficheContraintes(" . $numéro_index . ")\">" . $nom_option . "</option>";
 }
 
-/*Cette fonction doit être utilisée à l'intérieur d'une liste. Si c'est le cas, elle y ajoutera un input de type texte et de nom $nom.
-* Une checkbox sera également ajoutée. Elle sera cochée par défaut, et elle renverra à la fonction $checkbox_cochée en cas de clique.
+/*Cette fonction renvoie une chaîne de caractère représentant une contrainte (bloc de code HTML).
+* Une contrainte consiste en un input de type texte et de nom $nom, et en une checkbox (cochée par défaut) associée.
 * Si $nom contient des underscores, ils seront remplacés par des espaces pour l'affichage à l'écran.
 * De même, une majuscule est ajoutée au début de $nom lors de l'affichage.*/
 function ajoute_input($nom) {
@@ -213,7 +213,8 @@ EOT;
 echo <<< EOT
 
   <p> Vous pouvez ici choisir une table à afficher, avec éventuellement des contraintes.</br>Vous pouvez sélectionner les colonnes pour l'affichage en cliquant sur la checkbox correspondante.</br>
-      Vous pouvez contraindre les valeurs d'une colonne même si vous ne l'avez pas sélectionnée.</p>
+      Vous pouvez contraindre les valeurs d'une colonne même si vous ne l'avez pas sélectionnée.</br>
+      Pour les champs textuels, les tuples affichés seront ceux contenant la valeur indiquée.</br>Pour les champs numériques, seront affichés les tuples pour lesquels l'égalité est vérifiée.</br></p>
   <div class="form">
   <form action="action_page_a.php" method="post">
     <label for="table">Table</label>

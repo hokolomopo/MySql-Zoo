@@ -39,7 +39,7 @@ EOT;
     function invalid_request()
     {
         echo "requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        get_body_return_button($GLOBALS['page_de_retour']);
         exit(1);
     }
 

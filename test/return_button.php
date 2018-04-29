@@ -3,7 +3,7 @@
 function get_style_return_button()
 {
 	echo <<< EOT
-	input[type=submit] {
+	input.post_return_button {
         display: block;
         width: 50%;
         background-color: #4CAF50;
@@ -42,7 +42,7 @@ function get_body_return_button_with_post($page, $post)
     foreach ($post as $clé => $valeur) {
         $echo .= "<input type='hidden' name='" . $clé . "' value='" . $valeur . "'>";
     }
-    $echo .= "<input type='submit' value='Effectuer de nouveau la requête'></form>";
+    $echo .= "<input type='submit' class='post_return_button' value='Effectuer de nouveau la requête'></form>";
     echo $echo;
 }
 
@@ -50,6 +50,14 @@ function get_body_return_button_with_post($page, $post)
 function get_body_return_button($page)
 {
     echo '<a href="' . $page . '"> <input type="button" value="Effectuer de nouveau la requête"> </a>';
+}
+
+/*Cette fonction renvoie un bouton permettant de rediriger à la page $page, le début de ce bouton ($gradient étant un pourcentage)
+* possède une couleur différente du reste, de telle sorte qu'il ressemble à une barre de chargement.*/
+function get_body_return_button_gradient($page, $gradient) {
+    $echo = '<a href="' . $page . '"> <input type="button" value="Effectuer de nouveau la requête"';
+    $echo .= ' style="background: linear-gradient(to right, blue 0%, blue ' . $gradient . '%, #4CAF50 ' . $gradient . '%, #4CAF50 100%);"> </a>';
+    echo $echo;
 }
 
 ?>

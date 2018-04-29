@@ -3,7 +3,7 @@
 function get_style_return_button()
 {
 	echo <<< EOT
-	input[type=submit] {
+	input.post_return_button {
         display: block;
         width: 50%;
         background-color: #4CAF50;
@@ -42,7 +42,7 @@ function get_body_return_button_with_post($page, $post)
     foreach ($post as $clé => $valeur) {
         $echo .= "<input type='hidden' name='" . $clé . "' value='" . $valeur . "'>";
     }
-    $echo .= "<input type='submit' value='Effectuer de nouveau la requête'></form>";
+    $echo .= "<input type='submit' class='post_return_button' value='Effectuer de nouveau la requête'></form>";
     echo $echo;
 }
 
