@@ -43,11 +43,11 @@ function affiche_valeur_ligne($line)
 function affiche_tableau($tableau, $titre) {
 	echo '<center><p>' . $titre . '</p><table>';
 
-    print_key_line($tableau[0]);
+   affiche_cle_ligne($tableau[0]);
 
     foreach($tableau as $données)
     {
-        print_value_line($données);
+        affiche_valeur_ligne($données);
     }    
 
     echo '</table></center></br>';

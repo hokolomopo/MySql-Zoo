@@ -1,6 +1,6 @@
 <?php 
 
-$dbName = "group24";
+$dbName = "zoo";
 
 function get_pdo_path()
 {
