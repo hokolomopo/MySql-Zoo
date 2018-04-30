@@ -4,7 +4,7 @@
 function erreur_exception($requête, $exception) {
 	echo "Erreur inattendue lors de l'exécution de la requête.</br></br>Requête: ";
 	echo $requête . "</br> Message: ";
-	echo $exception->getmMssage();
+	echo $exception->getMessage();
 	exit(1);
 }
 

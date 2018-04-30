@@ -296,10 +296,6 @@ EOT;
          execute_sql_insert($bdd, 'e_ajoute_provenance.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'], ':nom_institution' => $_POST['nom']));
     }
 
-    if ($ajouter_provenance) {
-        execute_sql_insert($bdd, 'e_ajoute_provenance.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'], ':nom_institution' => $_POST['nom']));
-    }
-
     echo "L'animal a été ajouté avec succès !</br>";
     echo "Voici un récapitulatif :</br>";
     unset($_POST["avertissement_confirmé"]);

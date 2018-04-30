@@ -13,7 +13,7 @@ include 'db_connect.php';
 
 <style>
 
-<?php get_style_overlay(); ?>
+<?php style_fond(); ?>
 
 input[type=text], select {
     width: 100%;
@@ -81,7 +81,7 @@ else{
     $idSuccess = false;
     if(array_key_exists('uname', $_POST) and array_key_exists('password', $_POST)){
         try{
-            new PDO(get_pdo_path(), htmlspecialchars($_POST['uname']), htmlspecialchars($_POST['password']));
+            new PDO(adresse_pdo(), htmlspecialchars($_POST['uname']), htmlspecialchars($_POST['password']));
             $idSuccess = true;
         }
         catch(PDOException $e){}
@@ -95,8 +95,8 @@ else{
     }
 
     else{
-        get_body_overlay();
-        begin_main();
+        corps_fond();
+        debut_main();
         echo <<< EOT
             <div class="form">
             <form action="connexion.php" method="post">
@@ -114,7 +114,7 @@ EOT;
     }
 }
 
-end_main();
+fin_main();
 
 ?>
 

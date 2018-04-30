@@ -17,7 +17,7 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
 <style>
 EOT;
 
-get_style_overlay();
+style_fond();
 
 echo <<< EOT
 
@@ -77,9 +77,9 @@ p{
 <body>
 EOT;
 
-get_body_overlay();
+corps_fond();
 
-begin_main();
+debut_main();
 
 echo <<< EOT
     <p> Cette page permet de calculer la proportion d'interventions qui ont été effectuées sur des animaux présents dans un enclos dont le climat ne correspond pas à l'un de ceux supportés par leur espèce. </p>
@@ -91,7 +91,7 @@ echo <<< EOT
     </div>
 EOT;
 
-end_main();
+fin_main();
 
 echo <<< EOT
     </body>

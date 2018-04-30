@@ -19,7 +19,7 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
 <style>
 EOT;
 
-get_style_overlay();
+style_fond();
 
 echo <<< EOT
 
@@ -79,9 +79,9 @@ p{
 <body>
 EOT;
 
-get_body_overlay();
+corps_fond();
 
-begin_main();
+debut_main();
 
     function table_inexistante() {
         global $ajouts_permis, $table_courante;
@@ -181,7 +181,7 @@ begin_main();
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
+        $bdd = new PDO(adresse_pdo(), $_SESSION['uname'], $_SESSION['password']);
     }
         catch(Exception $e)
     {
@@ -197,7 +197,7 @@ begin_main();
     $colonnes_par_table = array();
     $clé_étrangères_par_table = array();
     foreach ($tables_possibles as $key => $table_courante) {
-        $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $table_courante . "' AND table_schema='" . get_dbname() . "'", null);
+        $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $table_courante . "' AND table_schema='" . bd_nom() . "'", null);
         if (count($colonnes_tmp) == 0) {
             table_inexistante();
         }
@@ -218,7 +218,7 @@ begin_main();
         //Initialise $clé_étrangères: un tableau dont les clés sont les noms des colonnes de $table_courante qui sont des clés étrangères,
         //et dont les valeurs sont des tableaux contenant le nom de la table et le nom de la colonne référencée.
         $clé_étrangères = array();
-        $infos_clés_étrangères = execute_requête_string($bdd, "SELECT * FROM information_schema.key_column_usage WHERE table_name = '" . $table_courante . "' AND table_schema='" . get_dbname() . "' AND REFERENCED_TABLE_NAME like '%'", null);
+        $infos_clés_étrangères = execute_requête_string($bdd, "SELECT * FROM information_schema.key_column_usage WHERE table_name = '" . $table_courante . "' AND table_schema='" . bd_nom() . "' AND REFERENCED_TABLE_NAME like '%'", null);
         foreach ($infos_clés_étrangères as $infos_clé_étrangère) {
             $clé_étrangères[$infos_clé_étrangère['COLUMN_NAME']] = array($infos_clé_étrangère['REFERENCED_TABLE_NAME'], $infos_clé_étrangère['REFERENCED_COLUMN_NAME']);
         }
@@ -296,7 +296,7 @@ echo <<< EOT
 </div>
 EOT;
 
-end_main();
+fin_main();
 
 echo <<< EOT
 

@@ -19,7 +19,7 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
 <style>
 EOT;
 
-get_style_overlay();
+style_fond();
 
 echo <<< EOT
 
@@ -89,9 +89,9 @@ p{
 <body>
 EOT;
 
-get_body_overlay();
+corps_fond();
 
-begin_main();
+debut_main();
 
 /*Cette fonction doit être utilisée à l'intérieur d'un <select>. Si c'est le cas, elle ajoutera une option à cette liste.
 * L'argument est le nom de l'option.*/
@@ -134,7 +134,7 @@ function ajoute_input($nom) {
 
   try
   {
-      $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
+      $bdd = new PDO(adresse_pdo(), $_SESSION['uname'], $_SESSION['password']);
   }
   catch(Exception $e)
   {
@@ -143,7 +143,7 @@ function ajoute_input($nom) {
 
   //Initialise $noms_tables: un tableau contenant le nom de toutes les tables présentes dans la base de donnée.
   //L'ordre des tables dans $noms_tables est notre référence, et on le respectera rigoureusement afin de pouvoir ensuite comparer les index des différents tableaux.
-  $noms_tables_tmp = execute_requête_string($bdd, "SELECT DISTINCT table_name FROM information_schema.columns WHERE table_schema=\"" . get_dbname() . "\"", null);
+  $noms_tables_tmp = execute_requête_string($bdd, "SELECT DISTINCT table_name FROM information_schema.columns WHERE table_schema=\"" . bd_nom() . "\"", null);
 
   $noms_tables = array();
   $i = 0;
@@ -159,7 +159,7 @@ function ajoute_input($nom) {
   //$indexs prend comme clé le nom d'une table, et renvoie l'index associé à cette table dans $tableau_contraintes_JS
   $indexs = array();
   foreach ($noms_tables as $table) {
-    $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $table . "' AND table_schema='" . get_dbname() . "'", null);
+    $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $table . "' AND table_schema='" . bd_nom() . "'", null);
 
     $i = 0;
     $colonnes = array();
@@ -255,7 +255,7 @@ EOT;
   </div>
 EOT;
 
-end_main();
+fin_main();
 
 echo <<< EOT
 

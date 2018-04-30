@@ -2,12 +2,12 @@
 
 $dbName = "group24";
 
-function get_pdo_path()
+function adresse_pdo()
 {
 	return "mysql:host=localhost;dbname=" . $GLOBALS['dbName'] . ";charset=utf8";
 }
 
-function get_dbname()
+function bd_nom()
 {
 	return $GLOBALS['dbName'];
 }
