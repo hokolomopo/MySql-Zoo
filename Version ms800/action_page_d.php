@@ -78,17 +78,9 @@ EOT;
         header('Location: connexion.php');
     }
 
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     $page_de_retour = "page_d.php";
 
-    try {
-        $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);
-    } catch (Exception $e) {
-        echo "La requête n'a pas pu être exécutée pour une raison inconnue, la table n'existe peut être pas.";
-        get_body_return_button($page_de_retour);
-        exit(1);
-    }
+    $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);
 
     $proportion = $résultats[0]['proportion'];
     $proportion = doubleval($proportion)*100;

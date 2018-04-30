@@ -8,7 +8,6 @@ include 'db_connect.php';
 include 'print_table.php';
 include 'execute_sql.php';
 
-// si l'utilisateur est connectés, affiche la page
 if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']) {
     echo <<< EOT
     <!DOCTYPE html>
@@ -20,13 +19,10 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']) {
     <style>
 EOT;
     
-    //ajoute le code css de l'overlay
     get_style_overlay();
 
-    //ajoute le code css du bouton de retour
     get_style_return_button();
 
-    //ajoute le code css des tableaux
     get_style_table();
 
     echo <<< EOT
@@ -36,26 +32,21 @@ EOT;
     <body>
 EOT;
 
-    //ajoute le code html de l'overlay
     get_body_overlay();
 
-    //ajoute le code html constituant le debut de la partie principale 
     begin_main();
 
-    //fonctionnement en cas de requête invalide
-    function requete_invalide()
+    function invalid_request()
     {
         echo "requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.";
         get_body_return_button($GLOBALS['page_de_retour']);
         exit(1);
     }
 
-    //crée l'accès à la base de de données
     try
     {
         $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
     }
-    //en cas d'erreur, on retourne a la page de connexion car il est probable que ce soit du aux indentifiants
     catch(Exception $e)
     {
         header('Location: connexion.php');
@@ -68,14 +59,12 @@ EOT;
         $_POST[$key] = htmlspecialchars($_POST[$key]);
     }
 
-    //vérifie la présence de l'information concernant la table traitée dans la requête
     if(!array_key_exists('table', $_POST))
-        requete_invalide();
+        invalid_request();
 
-    //récupère le nom des différentes colonnes de la table traitée
     $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $_POST['table'] . "' AND table_schema='" . get_dbname() . "'", null);
     if (count($colonnes_tmp) == 0) {
-        requete_invalide();
+        invalid_request();
     }
 
     $i = 0;
@@ -104,7 +93,6 @@ EOT;
         }
     }
 
-    //début de la construction de la requête
     $requête .= " FROM " . $_POST['table'];
 
     if(!$colonne_trouvée) {
@@ -119,7 +107,7 @@ EOT;
     foreach($colonnes as $nom_colonne){
 
         if(!isset($_POST[$nom_colonne])) {
-            requete_invalide();
+            invalid_request();
         }
 
         $info = execute_sql_classique($bdd, 'get_db_information.sql', array(':table' => $_POST['table'], ':column' => $nom_colonne));
@@ -142,7 +130,6 @@ EOT;
                         exit(1);
                     }
 
-                    //notifie qu'il s'agit d'un type string afin de moifier la manière de gérer l'égalité dans la requête sql
                     $valeur_is_string = true;
 
                     break;
@@ -158,7 +145,6 @@ EOT;
 
                     break;
 
-                //le code du case int sera exécuté dans le case smallint
                 case 'smallint':
                 case 'int':
 
@@ -183,26 +169,22 @@ EOT;
                     break;
             }
 
-            //ajoute la condition d'égalité dans le cas d'une string, Cette contrainte est faite de sorte que les éléments dont le début de la chaine de caractère de l'attribut correspond à la valeur recherchée mais incomplète soient reprises.
             if($valeur_is_string){
                 $eq_operateur = "like";
-                $opérateur_de_début = '"%';
-                $opérateur_de_fin = '%"';
+                $opérateur_de_début = "\"%";
+                $opérateur_de_fin = "%\"";
             }
-            //ajoute la condition d'égalité dans les autre cas.
             else{
                 $eq_operateur = "=";
                 $opérateur_de_début = "";
                 $opérateur_de_fin = "";
             }
 
-            //cas ou c'est la première contrainte exprimée dans la requête
             if($premier){
                 $contraintes .= $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin;
                 $requête .= " where " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin;
                 $premier = false;
             }
-            //cas ou ce n'est pas la première contrainte exprimée dans la requête
             else{
                 $contraintes .= " ; " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin;
                 $requête .= " and " . $nom_colonne . " " . $eq_operateur . " " . $opérateur_de_début . $_POST[$nom_colonne] . $opérateur_de_fin;
@@ -210,13 +192,10 @@ EOT;
         }
     }
 
-    //fin de la construction de la requête
     $requête = $requête . ";";
 
-    //exécution de la requête
     $résultat = execute_requête_string($bdd, $requête, null);
 
-    //affichage du résultat
     if(count($résultat) == 0)
         echo "Pas de résultats. </br>";
 
@@ -238,7 +217,6 @@ EOT;
     
     get_body_return_button_with_post($page_de_retour, $_POST);
 
-    //ajoute le code html constituant le debut de la partie principale
     end_main();
 
     echo <<< EOT
@@ -247,7 +225,6 @@ EOT;
 EOT;
 }
 
-//si l'utilisateur n'est pas connecté, renvoie a la page de connexion
 else{
     header('Location: connexion.php');
 }

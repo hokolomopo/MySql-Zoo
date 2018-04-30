@@ -97,14 +97,12 @@ EOT;
         header('Location: connexion.php');
     }
 
-    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     //Les variables sont set même si l'utilisateur n'a rien n'écrit dans le formulaire
     if (!isset($_POST['avertissement_confirmé']) || !isset($_POST['nom_scientifique']) || !isset($_POST['n_puce']) ||
         !isset($_POST['taille']) || !isset($_POST['sexe']) || !isset($_POST['date_naissance']) || !isset($_POST['n_enclos']) ||
         !isset($_POST['nom']) || !isset($_POST['rue']) || !isset($_POST['code_postal']) ||
         !isset($_POST['pays'])) {
-        echo "Veuillez utiliser le formulaire de la page e afin d'effectuer un ajout d'animal.</br>";
+        echo "Veuillez utiliser le formulaire de la page e afin d'effectuer un ajout d'animal, et compléter les champs requis.</br>";
         get_body_return_button_with_post($page_de_retour, $_POST);
         exit(1);
     }
@@ -285,35 +283,17 @@ EOT;
         }
     }
 
-    try {
-        execute_sql_insert($bdd, 'e_ajoute_animal.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
+    execute_sql_insert($bdd, 'e_ajoute_animal.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'],
                                                                  ':taille' => $_POST['taille'], ':sexe' => $_POST['sexe'],
                                                                  ':date_naissance' => $date, ':n_enclos' => $_POST['n_enclos']));
-    } catch (Exception $e) {
-        echo "L'ajout de l'animal n'a pas fonctionné pour une raison inconnue.</br>";
-        get_body_return_button_with_post($page_de_retour, $_POST);
-        exit(1);
-    }
 
     if ($ajouter_institution) {
-        try {
-            execute_sql_insert($bdd, 'e_ajoute_institution.sql', array(':nom' => $_POST['nom'], ':rue' => $_POST['rue'], ':code_postal' => $_POST['code_postal'],
+        execute_sql_insert($bdd, 'e_ajoute_institution.sql', array(':nom' => $_POST['nom'], ':rue' => $_POST['rue'], ':code_postal' => $_POST['code_postal'],
                                                                           ':pays' => $_POST['pays']));
-        } catch (Exception $e) {
-            echo "L'ajout de l'institution n'a pas fonctionné pour une raison inconnue.</br>";
-            get_body_return_button_with_post($page_de_retour, $_POST);
-            exit(1);
-        }
     }
 
     if ($ajouter_provenance) {
-        try {
-            execute_sql_insert($bdd, 'e_ajoute_provenance.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'], ':nom_institution' => $_POST['nom']));
-        } catch (Exception $e) {
-            echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue.</br>";
-            get_body_return_button_with_post($page_de_retour, $_POST);
-            exit(1);
-        }
+         execute_sql_insert($bdd, 'e_ajoute_provenance.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'], ':nom_institution' => $_POST['nom']));
     }
 
     echo "L'animal a été ajouté avec succès !</br>";

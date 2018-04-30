@@ -101,14 +101,24 @@ begin_main();
     }
 
     /*Cette fonction retourne un bloc de code HTML représentant un input de nom $nom.
+
     * Si la colonne $nom fais référence à une autre table, alors l'input sera une liste de toutes les valeurs existant dans la table référencée.
     * Si le nom de l'input contient "sexe" (insensible à la casse), alors l'input sera une liste de peux possibilités: M ou F.
     * Si le nom de l'input contient "date" (insensible à la casse), alors l'input sera une date.
     * Sinon, l'input sera simplement un bloc de texte classique.
+
     * L'input appartiendra à la classe $classe, ainsi que son label associé.
+
+    * Dans le cas d'un input de type liste, un input de texte sera ajouté. Lors de l'écriture dans cet input de type texte,
+    * la fonction recherche_liste est appelée ce qui permet, moyennant l'existence d'un tableau Javascript contenant
+    * le(s) tableaux de recherche, de filtrer la liste pour ne garder que les éléments dont le contenu contient ce qui est écrit dans l'input texte.
+
+    * Toujours dans le cas d'un input de type liste, si $valeur_vide n'est pas null, une option dont la valeur sera
+    * une chaîne de caractère vide et dont le contenu HTML sera $valeur_vide est ajoutée.
+
     * Si $nom contient des underscores, ils seront remplacés par des espaces pour l'affichage à l'écran.
     * De même, une majuscule est ajoutée au début de $nom lors de l'affichage.*/
-    function ajoute_input($nom, $nom_table, $classe, &$tableau_pour_recherche) {
+    function ajoute_input($nom, $nom_table, $classe, &$tableau_pour_recherche, $valeur_vide) {
         global $bdd;
         $clé_étrangères = $GLOBALS["clé_étrangères_par_table"][$nom_table];
 
@@ -128,35 +138,42 @@ begin_main();
             $tableau_pour_recherche = "[";
 
             $résultat = execute_requête_string($bdd, "SELECT " . $clé_étrangères[$nom][1] . " FROM " . $clé_étrangères[$nom][0], null);
-            $ret .= "<select id='" . $nom . "' name='" . $nom . "' class='" . $classe . "' onclick=recherche_liste('" . $nom . "', " . $GLOBALS['INDEX_RECHERCHE_TABLEAUX'] . ")>";
-            $GLOBALS['INDEX_RECHERCHE_TABLEAUX']++;
+            $ret .= "<select id='" . $nom . "' name='" . $nom . "' class='" . $classe . "'>";
+
+            if($valeur_vide != null) {
+                $tableau_pour_recherche .= "'<option>" . $valeur_vide . "</option>'";
+                $premier = false;
+                $ret .= "<option value=''>" . $valeur_vide . "</option>";
+            }
             foreach ($résultat as $tuple) {
                 if ($premier) {
-                    $tableau_pour_recherche .= "'<option value=" . $tuple[0] . ">" . $tuple[0] . "</option>'";
+                    $tableau_pour_recherche .= "\"<option>" . $tuple[0] . "</option>\"";
                     $premier = false;
                 } else {
-                    $tableau_pour_recherche .= ", '<option value=" . $tuple[0] . ">" . $tuple[0] . "</option>'";
+                    $tableau_pour_recherche .= ", \"<option>" . $tuple[0] . "</option>\"";
                 }
 
-                $ret .= "<option value='" . $tuple[0] . "'>" . $tuple[0] . "</option>";
+                $ret .= "<option value=\"" . $tuple[0] . "\">" . $tuple[0] . "</option>";
             }
+
             $tableau_pour_recherche .= "]";
 
-            $ret .= "<script>document.getElementById('" . $nom . "').value='" . $valeur_initiale . "';</script>";
+            $ret .= "<script>document.getElementById('" . $nom . "').value=\"" . $valeur_initiale . "\"</script>";
             $ret .= "</select>";
-            $ret .= "Cliquez sur la liste pour n'afficher que les éléments qui contiennent la chaîne de caractère présente dans le champ ci-dessous.</br>";
-            $ret .= "<input type='text' id='" . $nom . "_champ_recherche' class='" . $classe ."'>";
+            $ret .= "Écrivez dans la zone de texte ci-dessous pour ne garder dans la liste que les éléments qui contiennent le texte écrit.</br>";
+            $ret .= "<input type='text' id='" . $nom . "_champ_recherche' class='" . $classe ."' onkeyup='recherche_liste(\"" . $nom . "\", " . $GLOBALS['INDEX_RECHERCHE_TABLEAUX'] . ")'>";
+            $GLOBALS['INDEX_RECHERCHE_TABLEAUX']++;
         } elseif (stristr($nom, "sexe") != false) {
             $ret .= "<select id='" . $nom . "' name='" . $nom . "' class='" . $classe . "'>";
             $ret .= "<option value='M'>M</option>";
             $ret .= "<option value='F'>F</option>";
-            $ret .= "<script>document.getElementById('" . $nom . "').value='" . $valeur_initiale . "'</script>";
+            $ret .= "<script>document.getElementById('" . $nom . "').value=\"" . $valeur_initiale . "\"</script>";
             $ret .= "</select>";
         } elseif (stristr($nom, "date") != false) {
-            $ret .= "<input type='date' id='" . $nom . "' name='" . $nom . "' value='" . $valeur_initiale . "' class='" . $classe . "'>";
+            $ret .= "<input type='date' id='" . $nom . "' name='" . $nom . "' value=\"" . $valeur_initiale . "\" class='" . $classe . "'>";
         }
         else {
-            $ret .= "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "...' value='" . $valeur_initiale . "' class='" . $classe . "'>";
+            $ret .= "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "...' value=\"" . $valeur_initiale . "\" class='" . $classe . "'>";
         }
 
         return $ret;
@@ -220,7 +237,7 @@ EOT;
     $premier = true;
     foreach ($colonnes_par_table["Animal"] as $colonne) {
         $recherche_tableaux_tmp = "";
-        echo ajoute_input($colonne, "Animal", null, $recherche_tableaux_tmp);
+        echo ajoute_input($colonne, "Animal", null, $recherche_tableaux_tmp, null);
         if($recherche_tableaux_tmp != "") {
             if($premier) {
                 $recherche_tableaux .= $recherche_tableaux_tmp;
@@ -244,25 +261,31 @@ echo '  <input type="hidden" id="avertissement_confirmé" name="avertissement_co
 
         <div id="institution_2_modes"></div>';
 
-    $nouvelle_institution = "var nouvelle_institution = \"" . ajoute_input("nom", "Institution", null, $recherche_tableaux_tmp) . "\"";
+    $nouvelle_institution = "var nouvelle_institution = \"" . str_replace('"', "#guillemet", ajoute_input("nom", "Institution", null, $recherche_tableaux_tmp, null)) . "\"";
 
     //On crée une fausse référence afin d'obtenir la liste de toutes les institutions existantes
     $clé_étrangères_par_table["Institution"]["nom"] = array("Institution", "nom");
 
     $recherche_tableaux_tmp = "";
-    $pas_nouvelle_institution = "var pas_nouvelle_institution = \"" . ajoute_input("nom", "Institution", null, $recherche_tableaux_tmp) . "\"";
+    $pas_nouvelle_institution = "var pas_nouvelle_institution = \"" . str_replace('"', "#guillemet", ajoute_input("nom", "Institution", null, $recherche_tableaux_tmp, "Aucune institution (pas de provenance)")) . "\"";
     $recherche_tableaux .= ", " . $recherche_tableaux_tmp . "];";
 
     //On supprime les balises scripts car il y en a déjà autour de la fonction
-    $pas_nouvelle_institution = str_replace("<script>", "", $pas_nouvelle_institution);
-    $pas_nouvelle_institution = str_replace("</script>", "", $pas_nouvelle_institution);
-    unset($clé_étrangères_par_table["Institution"]["nom"]);
-    //Ajout d'une première option qui correspond à aucune institution (pas de provenance)
-    $pas_nouvelle_institution = stristr($pas_nouvelle_institution, "<option ", true) . "<option value=''>Aucune institution (pas de provenance)</option>" . stristr($pas_nouvelle_institution, "<option ");
+    $enlève_script = explode("<script>", $pas_nouvelle_institution);
+    $pas_nouvelle_institution = $enlève_script[0];  //avant le <script>
+    $enlève_script = explode("</script>", $enlève_script[1]);
+    $pas_nouvelle_institution .= $enlève_script[1]; //après le </script>
+    $script = $enlève_script[0];    //avant le </script> et après le <script>
 
+    //On récupère la valeur initiale car il faut quand même pouvoir la donner à la liste
+    $valeur_initiale_institution_tmp = explode("value=#guillemet", $script);
+    $valeur_initiale_institution_tmp = explode("#guillemet", $valeur_initiale_institution_tmp[1]);   //après le value=#guillemet
+    $valeur_initiale_institution = $valeur_initiale_institution_tmp[0]; //avant le dernier #guillemet mais aussi après le value=#guillemet
+    unset($clé_étrangères_par_table["Institution"]["nom"]);
+    
     foreach ($colonnes_par_table["Institution"] as $colonne) {
         if ($colonne != "nom") {
-            echo ajoute_input($colonne, "Institution", "newInstitution", $recherche_tableaux_tmp);
+            echo ajoute_input($colonne, "Institution", "newInstitution", $recherche_tableaux_tmp, null);
         }
     }
 
@@ -282,13 +305,12 @@ EOT;
     echo "\n" . $nouvelle_institution . "\n";
     echo $pas_nouvelle_institution . "\n";
 
-    echo "var test = [['a', 'b', 'c', 'd', 'e'], ['f', 'g', 'h'], ['i', 'g']];" . "\n";
+    echo $recherche_tableaux;
 
-    //echo $recherche_tableaux;
-
-    //echo "var tableaux_options = [ ['<option value=Ailuropoda melanoleuca>Ailuropoda melanoleuca</option>', '<option value=Ailurus fulgens>Ailurus fulgens</option>', '<option value=Aptenodytes forsteri>Aptenodytes forsteri</option>', '<option value=Ardea cinerea>Ardea cinerea</option>', '<option value=Bubo scandiacus>Bubo scandiacus</option>', '<option value=Canis dingo>Canis dingo</option>', '<option value=Canis lupus>Canis lupus</option>', '<option value=Cervus canadensis>Cervus canadensis</option>', '<option value=Elephas maximus>Elephas maximus</option>', '<option value=Equus caballus>Equus caballus</option>', '<option value=Eunectes murinus>Eunectes murinus</option>', '<option value=Falco peregrinus>Falco peregrinus</option>', '<option value=Felis silvestris>Felis silvestris</option>', '<option value=Giraffa camelopardalis>Giraffa camelopardalis</option>', '<option value=Haliaeetus leucocephalus>Haliaeetus leucocephalus</option>', '<option value=Hippopotamus amphibius>Hippopotamus amphibius</option>', '<option value=Loxodonta africana>Loxodonta africana</option>', '<option value=Lutra lutra>Lutra lutra</option>', '<option value=Lynx rufus>Lynx rufus</option>', '<option value=Pan troglodytes>Pan troglodytes</option>', '<option value=Panthera leo>Panthera leo</option>', '<option value=Panthera pardus>Panthera pardus</option>', '<option value=Panthera tigris>Panthera tigris</option>', '<option value=Panthera uncia>Panthera uncia</option>', '<option value=Pongo pygmaeus>Pongo pygmaeus</option>', '<option value=Prunella modularis>Prunella modularis</option>', '<option value=Rangifer tarandus>Rangifer tarandus</option>', '<option value=Struthio camelus>Struthio camelus</option>', '<option value=Urocyon cinereoargenteus>Urocyon cinereoargenteus</option>', '<option value=Ursus maritimus>Ursus maritimus</option>'], ['<option value=1>1</option>', '<option value=2>2</option>', '<option value=3>3</option>', '<option value=4>4</option>', '<option value=5>5</option>', '<option value=6>6</option>', '<option value=7>7</option>', '<option value=8>8</option>', '<option value=9>9</option>', '<option value=10>10</option>', '<option value=11>11</option>', '<option value=12>12</option>', '<option value=13>13</option>', '<option value=14>14</option>', '<option value=15>15</option>', '<option value=16>16</option>', '<option value=17>17</option>', '<option value=18>18</option>', '<option value=19>19</option>', '<option value=20>20</option>', '<option value=21>21</option>', '<option value=22>22</option>', '<option value=23>23</option>', '<option value=24>24</option>', '<option value=25>25</option>', '<option value=26>26</option>', '<option value=27>27</option>', '<option value=28>28</option>', '<option value=29>29</option>', '<option value=30>30</option>', '<option value=31>31</option>', '<option value=32>32</option>', '<option value=33>33</option>', '<option value=34>34</option>', '<option value=35>35</option>', '<option value=36>36</option>', '<option value=37>37</option>', '<option value=38>38</option>', '<option value=39>39</option>', '<option value=40>40</option>', '<option value=41>41</option>', '<option value=42>42</option>', '<option value=43>43</option>', '<option value=44>44</option>', '<option value=45>45</option>', '<option value=46>46</option>', '<option value=47>47</option>', '<option value=48>48</option>', '<option value=49>49</option>', '<option value=50>50</option>'], ['<option value=Australia Natural Reserve>Australia Natural Reserve</option>', '<option value=Bifengxia Panda Base>Bifengxia Panda Base</option>', '<option value=Institut Zoologique de Stockholm>Institut Zoologique de Stockholm</option>', '<option value=Pairi Daiza>Pairi Daiza</option>', '<option value=Parc National des Virunga>Parc National des Virunga</option>', '<option value=Parc National du Nord-Est du Groenland>Parc National du Nord-Est du Groenland</option>', '<option value=Parc Naturel de Bolivie>Parc Naturel de Bolivie</option>', '<option value=Parc de Merlet>Parc de Merlet</option>', '<option value=Réserve du Texas>Réserve du Texas</option>', '<option value=Zoo d'Anvers>Zoo d'Anvers</option>' ] ];" . "\n";
+    echo 'var valeur_initiale_institution = "' . $valeur_initiale_institution . '"';
 
 echo <<< EOT
+
 function checkBoxClick() {
     var affichage_institution = document.getElementById("institution_2_modes");
 
@@ -296,26 +318,58 @@ function checkBoxClick() {
 
     var toChange = document.getElementsByClassName("newInstitution");
 
-    if (checkBox.checked == true){
-        affichage_institution.innerHTML = nouvelle_institution;
+    //fixer display à none empêche également de recevoir l'élément en utilisant getElementById, cette ligne ne retourne donc qu'un seul élément
+    var précédent_mode_affichage = document.getElementById("nom");
+
+    if (checkBox.checked == true){  //nouvelle institution
+        affichage_institution.innerHTML = nouvelle_institution.replace(/#guillemet/g, '"');
         for(i=0; i<toChange.length; i++) {
             toChange[i].style.display = "block";
         }
     } else {
-        affichage_institution.innerHTML = pas_nouvelle_institution;
+        affichage_institution.innerHTML = pas_nouvelle_institution.replace(/#guillemet/g, '"');
         for(i=0; i<toChange.length; i++) {
             toChange[i].value="";
             toChange[i].style.display = "none";
         }
     }
+
+    //Le document.getElementById("nom") a changé suite au if précédent
+    if (précédent_mode_affichage == null) {
+        document.getElementById("nom").value = valeur_initiale_institution;
+    } else {
+        console.log(précédent_mode_affichage.value);
+        document.getElementById("nom").value = précédent_mode_affichage.value;
+    }
+}
+
+function includes_case_insensitive(conteneur, contenu) {
+    for (var i = 0; i <= conteneur.length - contenu.length; i++) {
+        if (conteneur.substr(i, contenu.length).localeCompare(contenu, "fr", {sensitivity: "accent"}) == 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function recherche_liste(id_liste, index_tableau_options) {
-    /*var recherche = document.getElementById(id_liste + "_champ_recherche").value;
+    var recherche = document.getElementById(id_liste + "_champ_recherche").value;
     var liste = document.getElementById(id_liste);
     var tableau_options = tableaux_options[index_tableau_options];
-    console.log(tableau_options);*/
-    return 4;
+    liste.innerHTML = "";
+
+    var nom_option_tbl;
+    var nom_option;
+    for (var i = 0; i < tableau_options.length; i++) {
+        nom_option_tbl = tableau_options[i].split(">");
+        nom_option = nom_option_tbl[1];
+        nom_option_tbl = nom_option.split("<");
+        nom_option = nom_option_tbl[0];
+
+        if(includes_case_insensitive(nom_option, recherche)) {
+            liste.innerHTML += tableau_options[i];
+        }
+    }
 }
 
 checkBoxClick();
