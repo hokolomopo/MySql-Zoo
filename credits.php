@@ -8,7 +8,7 @@
 
 <style>
 
-<?php get_style_overlay() ?>
+<?php style_fond() ?>
 
 input[type=text], select {
     width: 100%;
@@ -68,8 +68,8 @@ ul{
 <body>
 
 <?php
-get_body_overlay();
-begin_main();
+corps_fond();
+debut_main();
 ?>
 
     <p> 
@@ -83,7 +83,7 @@ begin_main();
         <img src="https://78.media.tumblr.com/22733c59c1ddfd4b4dc5ffd17c2b745f/tumblr_njax2wztDY1rdlo21o1_1280.jpg">
     </p>
 
-<?php end_main() ?>
+<?php fin_main() ?>
      
 </body>
 </html> 

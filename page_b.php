@@ -17,7 +17,7 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
 <style>
 EOT;
 
-get_style_overlay();
+style_fond();
 
 echo <<< EOT
 ul
@@ -76,9 +76,9 @@ p{
 <body>
 EOT;
 
-get_body_overlay();
+corps_fond();
 
-begin_main();
+debut_main();
 
 echo <<< EOT
 
@@ -92,7 +92,7 @@ echo <<< EOT
 EOT;
 
 
-end_main();
+fin_main();
 
 echo <<< EOT
 </body>

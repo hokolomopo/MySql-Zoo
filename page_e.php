@@ -19,7 +19,7 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
 <style>
 EOT;
 
-get_style_overlay();
+style_fond();
 
 echo <<< EOT
 
@@ -79,9 +79,9 @@ p{
 <body>
 EOT;
 
-get_body_overlay();
+corps_fond();
 
-begin_main();
+debut_main();
 
     function table_inexistante() {
         global $ajouts_permis, $table_courante;
@@ -296,7 +296,7 @@ echo <<< EOT
 </div>
 EOT;
 
-end_main();
+fin_main();
 
 echo <<< EOT
 

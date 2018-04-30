@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 
 <style>
-<?php get_style_overlay() ?>
+<?php style_fond() ?>
 </style>
 
 </head>
@@ -15,13 +15,13 @@
 <body>
 
 <?php 
-get_body_overlay(); 
-begin_main();
+corps_fond(); 
+debut_main();
 ?>
 
     <h2 align="center">Super Zoo of the DOOM</h2>
 
-<?php end_main() ?>
+<?php fin_main() ?>
 
 </body>
 </html>

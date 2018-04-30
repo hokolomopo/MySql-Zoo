@@ -21,10 +21,10 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']) {
 EOT;
     
     //ajoute le code css de l'overlay
-    get_style_overlay();
+    style_fond();
 
     //ajoute le code css du bouton de retour
-    get_style_return_button();
+    style_bouton_retour();
 
     //ajoute le code css des tableaux
     get_style_table();
@@ -37,16 +37,16 @@ EOT;
 EOT;
 
     //ajoute le code html de l'overlay
-    get_body_overlay();
+    corps_fond();
 
     //ajoute le code html constituant le debut de la partie principale 
-    begin_main();
+    debut_main();
 
     //fonctionnement en cas de requête invalide
     function requete_invalide()
     {
         echo "requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.";
-        get_body_return_button($GLOBALS['page_de_retour']);
+        bouton_retour($GLOBALS['page_de_retour']);
         exit(1);
     }
 
@@ -109,7 +109,7 @@ EOT;
 
     if(!$colonne_trouvée) {
         echo "Vous n'avez sélectionné aucune colonne.";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        bouton_retour_avec_post($page_de_retour, $_POST);
         exit(1);
     }
 
@@ -138,7 +138,7 @@ EOT;
                     if(strlen($_POST[$nom_colonne]) > $info[0]['character_maximum_length'])
                     {
                         echo "le champ " . $nom_colonne . "doit contenir " . $info[0]['character_maximum_length'] . " caractères maximum.";
-                        get_body_return_button_with_post($page_de_retour, $_POST);
+                        bouton_retour_avec_post($page_de_retour, $_POST);
                         exit(1);
                     }
 
@@ -152,7 +152,7 @@ EOT;
                     if (!(preg_match('#^([0-9]{4}).([0-9]{2}).([0-9]{2})$#', $_POST[$nom_colonne], $date_tableau) == 1 && checkdate($date_tableau[2], $date_tableau[3], $date_tableau[1])))
                     {
                         echo "le format de " . $nom_colonne . " ne correspond pas au format attendu par le serveur.";
-                        get_body_return_button_with_post($page_de_retour, $_POST);
+                        bouton_retour_avec_post($page_de_retour, $_POST);
                         exit(1);
                     }
 
@@ -169,7 +169,7 @@ EOT;
                     if(!ctype_digit($test_valeur))
                     {
                         echo "le champ " . $nom_colonne . " doit contenir un entier.";
-                        get_body_return_button_with_post($page_de_retour, $_POST);
+                        bouton_retour_avec_post($page_de_retour, $_POST);
                         exit(1);
                     }
 
@@ -177,7 +177,7 @@ EOT;
 
                 default:
                     echo "erreur serveur, le type de donnée de " . $nom_colonne . " n'est pas géré par le serveur.";
-                    get_body_return_button_with_post($page_de_retour, $_POST);
+                    bouton_retour_avec_post($page_de_retour, $_POST);
                     exit(1);
 
                     break;
@@ -236,10 +236,10 @@ EOT;
 
     echo '</br>';
     
-    get_body_return_button_with_post($page_de_retour, $_POST);
+    bouton_retour_avec_post($page_de_retour, $_POST);
 
     //ajoute le code html constituant le debut de la partie principale
-    end_main();
+    fin_main();
 
     echo <<< EOT
     </body>

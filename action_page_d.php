@@ -18,9 +18,9 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     <style>
 EOT;
     
-    get_style_overlay();
+    style_fond();
 
-    get_style_return_button();
+    style_bouton_retour();
 
     echo <<< EOT
     .cv {
@@ -32,9 +32,9 @@ EOT;
     <body>
 EOT;
 
-    get_body_overlay();
+    corps_fond();
 
-    begin_main();
+    debut_main();
 
     /*Cette fonction traduit un pourcentage en français. L'argument ne doit pas commencer par des zéros inutiles (exemple : 04.45).
     * La précision de l'affichage en français se limitera aux deux premières décimales, avec un arrondi vers le bas.*/
@@ -86,7 +86,7 @@ EOT;
         $résultats = execute_sql_classique($bdd, "d_proportion.sql", null);
     } catch (Exception $e) {
         echo "La requête n'a pas pu être exécutée pour une raison inconnue, la table n'existe peut être pas.";
-        get_body_return_button($page_de_retour);
+        bouton_retour($page_de_retour);
         exit(1);
     }
 
@@ -98,9 +98,9 @@ EOT;
     echo "ne correspond pas à l'un de ceux supportés par son espèce est de</br>";
     echo $proportion_fr . " ( " . $proportion . "% )</p>";
 
-    get_body_return_button_gradient($page_de_retour, $proportion);
+    bouton_retour_gradient($page_de_retour, $proportion);
 
-    end_main();
+    fin_main();
 
     echo <<< EOT
     </div></center>

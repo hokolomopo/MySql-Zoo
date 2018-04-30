@@ -8,7 +8,7 @@
 
 <style>
 
-<?php get_style_overlay() ?>
+<?php style_fond() ?>
 
 input[type=text], select {
     width: 100%;
@@ -68,8 +68,8 @@ ul{
 <body>
 
 <?php 
-get_body_overlay(); 
-begin_main();
+corps_fond(); 
+debut_main();
 ?>
 
      <p> 
@@ -78,7 +78,7 @@ begin_main();
         Le meilleur endroit pour observer des animaux sauvages, c'est encore dans les amhpithéatres de la faculté de sciences appliquées ! 
     </p>
 
-<?php end_main() ?>
+<?php fin_main() ?>
 
 </body>
 </html> 

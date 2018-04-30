@@ -19,9 +19,9 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     <style>
 EOT;
     
-    get_style_overlay();
+    style_fond();
 
-    get_style_return_button();
+    style_bouton_retour();
 
     get_style_table();
 
@@ -72,9 +72,9 @@ input.post_confirm_button:hover {
     <body>
 EOT;
 
-    get_body_overlay();
+    corps_fond();
 
-    begin_main();
+    debut_main();
 
     $page_de_retour = 'page_e.php';
 
@@ -83,7 +83,7 @@ EOT;
     function vérifie_conditions_intégrité($val, $min, $max, $nom) {
         if ($val == "" || $val < $min || $val > $max) {
             echo $nom . " doit appartenir à l'intervalle [" . $min . " ; " . $max . "].";
-            get_body_return_button_with_post($GLOBALS['page_de_retour'], $_POST);
+            bouton_retour_avec_post($GLOBALS['page_de_retour'], $_POST);
             exit(1);
         }
     }
@@ -105,7 +105,7 @@ EOT;
         !isset($_POST['nom']) || !isset($_POST['rue']) || !isset($_POST['code_postal']) ||
         !isset($_POST['pays'])) {
         echo "Veuillez utiliser le formulaire de la page e afin d'effectuer un ajout d'animal.</br>";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        bouton_retour_avec_post($page_de_retour, $_POST);
         exit(1);
     }
 
@@ -120,13 +120,13 @@ EOT;
 
     if($_POST['sexe'] != 'M' && $_POST['sexe'] != 'F') {
         echo "Le sexe n'est pas valide, il doit être indiqué par M ou F.";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        bouton_retour_avec_post($page_de_retour, $_POST);
         exit(1);
     }
 
     if (!(preg_match('#^([0-9]{4}).([0-9]{2}).([0-9]{2})$#', $_POST['date_naissance'], $date_tableau) == 1 && checkdate($date_tableau[2], $date_tableau[3], $date_tableau[1]))) {
         echo "La date doit être fournie au format aaaa*mm*jj où les * peuvent être remplacées par n'importe quel caractère, et être valide.</br>";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        bouton_retour_avec_post($page_de_retour, $_POST);
         exit(1);
     }
     //Grâce au format année-mois-jour, on peut savoir si une date précède une autre simplement en comparant les chaînes de caractères.
@@ -136,13 +136,13 @@ EOT;
     //vérifie que les références vers d'autres tables sont correctes
     if (! (execute_vérification_existence($bdd, 'e_vérifie_nom_scientifique.sql', array(':nom_scientifique' => $_POST['nom_scientifique']))) ) {
         echo "L'espèce doit appartenir à la base de donnée.";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        bouton_retour_avec_post($page_de_retour, $_POST);
         exit(1);
     }
 
     if (! (execute_vérification_existence($bdd, 'e_vérifie_enclos.sql', array(':n_enclos' => $_POST['n_enclos']))) ) {
         echo "L'enclos doit exister.";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        bouton_retour_avec_post($page_de_retour, $_POST);
         exit(1);
     }
 
@@ -156,7 +156,7 @@ EOT;
 
         affiche_tableau($animaux, "Numéros de puce");
 
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        bouton_retour_avec_post($page_de_retour, $_POST);
         exit(1);
     }
 
@@ -227,7 +227,7 @@ EOT;
                 </form>
             </div>
             ";
-            get_body_return_button_with_post($page_de_retour, $_POST);
+            bouton_retour_avec_post($page_de_retour, $_POST);
             exit(1);
         }
     }
@@ -242,14 +242,14 @@ EOT;
     if (isset($_POST['institutionCheck']) == 1) {
         if($_POST['nom'] == "") {
             echo "Le nom de l'institution doit contenir au moins une lettre.</br>";
-            get_body_return_button_with_post($page_de_retour, $_POST);
+            bouton_retour_avec_post($page_de_retour, $_POST);
             exit(1);
         }
 
         if ($institution['existe'] == 0) {
             if ($_POST['rue'] == "") {
                 echo "La rue de l'institution est manquante";
-                get_body_return_button_with_post($page_de_retour, $_POST);
+                bouton_retour_avec_post($page_de_retour, $_POST);
                 exit(1);
             }
 
@@ -257,7 +257,7 @@ EOT;
 
             if($_POST['pays'] == "") {
                 echo "Le pays de l'institution est manquant";
-                get_body_return_button_with_post($page_de_retour, $_POST);
+                bouton_retour_avec_post($page_de_retour, $_POST);
                 exit(1);
             }
             $ajouter_institution = true;
@@ -269,7 +269,7 @@ EOT;
                 $ajouter_provenance = true;
             } else {
                 echo "Une autre institution avec le même nom existe déjà, impossible d'ajouter cette institution";
-                get_body_return_button_with_post($page_de_retour, $_POST);
+                bouton_retour_avec_post($page_de_retour, $_POST);
                 exit(1);
             }
         }
@@ -277,7 +277,7 @@ EOT;
         if($_POST['nom'] != "") {
             if($institution['existe'] == 0) {
                 echo "L'institution de provenance n'existe pas";
-                get_body_return_button_with_post($page_de_retour, $_POST);
+                bouton_retour_avec_post($page_de_retour, $_POST);
                 exit(1);
             } else {
                 $ajouter_provenance = true;
@@ -291,7 +291,7 @@ EOT;
                                                                  ':date_naissance' => $date, ':n_enclos' => $_POST['n_enclos']));
     } catch (Exception $e) {
         echo "L'ajout de l'animal n'a pas fonctionné pour une raison inconnue.</br>";
-        get_body_return_button_with_post($page_de_retour, $_POST);
+        bouton_retour_avec_post($page_de_retour, $_POST);
         exit(1);
     }
 
@@ -301,7 +301,7 @@ EOT;
                                                                           ':pays' => $_POST['pays']));
         } catch (Exception $e) {
             echo "L'ajout de l'institution n'a pas fonctionné pour une raison inconnue.</br>";
-            get_body_return_button_with_post($page_de_retour, $_POST);
+            bouton_retour_avec_post($page_de_retour, $_POST);
             exit(1);
         }
     }
@@ -311,7 +311,7 @@ EOT;
             execute_sql_insert($bdd, 'e_ajoute_provenance.sql', array(':nom_scientifique' => $_POST['nom_scientifique'], ':n_puce' => $_POST['n_puce'], ':nom_institution' => $_POST['nom']));
         } catch (Exception $e) {
             echo "L'ajout de la provenance n'a pas fonctionné pour une raison inconnue.</br>";
-            get_body_return_button_with_post($page_de_retour, $_POST);
+            bouton_retour_avec_post($page_de_retour, $_POST);
             exit(1);
         }
     }
@@ -334,9 +334,9 @@ EOT;
     header('Location: connexion.php');
 }
 
-    get_body_return_button_with_post($page_de_retour, $_POST);
+    bouton_retour_avec_post($page_de_retour, $_POST);
 
-    end_main();
+    fin_main();
     
     echo <<< EOT
     </body>
