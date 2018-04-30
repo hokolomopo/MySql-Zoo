@@ -1,6 +1,6 @@
 <?php
 
-function get_style_return_button()
+function style_bouton_retour()
 {
 	echo <<< EOT
 	input.post_return_button {
@@ -36,7 +36,7 @@ EOT;
 /*Cette fonction renvoie un bouton permettant de rediriger à la page $page. Les données contenues dans $post seront réenvoyées à la page cible avec une méthode POST.
 * Cela permet notamment d'auto-compléter certains champs précédemment remplis par l'utilisateur, afin qu'il puisse facilement exécuter plusieurs requêtes similaires
 * ou corriger une requête erronnée.*/
-function get_body_return_button_with_post($page, $post)
+function bouton_retour_avec_post($page, $post)
 {
     $echo = "<form action='" . $page . "' method='post'>";
     foreach ($post as $clé => $valeur) {
@@ -47,14 +47,14 @@ function get_body_return_button_with_post($page, $post)
 }
 
 /*Cette fonction renvoie un bouton permettant de rediriger à la page $page.*/
-function get_body_return_button($page)
+function bouton_retour($page)
 {
     echo '<a href="' . $page . '"> <input type="button" value="Effectuer de nouveau la requête"> </a>';
 }
 
 /*Cette fonction renvoie un bouton permettant de rediriger à la page $page, le début de ce bouton ($gradient étant un pourcentage)
 * possède une couleur différente du reste, de telle sorte qu'il ressemble à une barre de chargement.*/
-function get_body_return_button_gradient($page, $gradient) {
+function bouton_retour_gradient($page, $gradient) {
     $echo = '<a href="' . $page . '"> <input type="button" value="Effectuer de nouveau la requête"';
     $echo .= ' style="background: linear-gradient(to right, blue 0%, blue ' . $gradient . '%, #4CAF50 ' . $gradient . '%, #4CAF50 100%);"> </a>';
     echo $echo;

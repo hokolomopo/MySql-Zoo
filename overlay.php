@@ -1,6 +1,6 @@
 <?php
 
-function get_style_overlay()
+function style_fond()
 {
     echo <<< EOT
     body {
@@ -107,7 +107,7 @@ function get_style_overlay()
 EOT;
 }
 
-function get_body_overlay()
+function corps_fond()
 {
     echo <<< EOT
     <div class="header">
@@ -150,12 +150,12 @@ function get_body_overlay()
 EOT;
 }
 
-function begin_main()
+function debut_main()
 {
     echo '<div class="main">';
 }
 
-function end_main()
+function fin_main()
 {
     echo '</div>';
 }

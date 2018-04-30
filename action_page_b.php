@@ -19,9 +19,9 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
     <style>
 EOT;
 
-    get_style_overlay();
+    style_fond();
 
-    get_style_return_button();
+    style_bouton_retour();
 
     get_style_table();
 
@@ -32,9 +32,9 @@ EOT;
     <body>
 EOT;
 
-    get_body_overlay();
+    corps_fond();
 
-    begin_main();
+    debut_main();
 
     try
     {
@@ -57,9 +57,9 @@ EOT;
     }
 
     echo "</br>";
-    get_body_return_button($page_de_retour);
+    bouton_retour($page_de_retour);
 
-    end_main();
+    fin_main();
 
     echo <<<EOT
     </body>

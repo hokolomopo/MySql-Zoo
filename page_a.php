@@ -19,7 +19,7 @@ if(array_key_exists('connected', $_SESSION) and $_SESSION['connected']){
 <style>
 EOT;
 
-get_style_overlay();
+style_fond();
 
 echo <<< EOT
 
@@ -89,9 +89,9 @@ p{
 <body>
 EOT;
 
-get_body_overlay();
+corps_fond();
 
-begin_main();
+debut_main();
 
 /*Cette fonction doit être utilisée à l'intérieur d'un <select>. Si c'est le cas, elle ajoutera une option à cette liste.
 * L'argument est le nom de l'option.*/
@@ -255,7 +255,7 @@ EOT;
   </div>
 EOT;
 
-end_main();
+fin_main();
 
 echo <<< EOT
 
