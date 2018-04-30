@@ -25,7 +25,8 @@ EOT;
     //ajoute le code css du bouton de retour
     style_bouton_retour();
 
-    get_style_table();
+    //ajoute le code css des tableaux
+    style_tableau();
 
     echo <<< EOT
 

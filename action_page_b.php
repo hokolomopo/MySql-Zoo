@@ -23,7 +23,7 @@ EOT;
 
     style_bouton_retour();
 
-    get_style_table();
+    style_tableau();
 
     echo <<< EOT
 

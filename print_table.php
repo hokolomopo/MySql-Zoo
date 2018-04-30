@@ -1,6 +1,6 @@
 <?php
 
-function get_style_table()
+function style_tableau()
 {
 	echo <<< EOT
 	table
@@ -18,7 +18,7 @@ function get_style_table()
 EOT;
 }
 
-function print_key_line($line)
+function affiche_cle_ligne($line)
 {
 	echo '<tr>';
 	foreach($line as $key => $value)
@@ -29,7 +29,7 @@ function print_key_line($line)
 	echo '</tr>';
 }
 
-function print_value_line($line)
+function affiche_valeur_ligne($line)
 {
 	echo '<tr>';
 	foreach($line as $key => $value)
