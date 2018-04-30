@@ -40,7 +40,7 @@ function get_body_return_button_with_post($page, $post)
 {
     $echo = "<form action='" . $page . "' method='post'>";
     foreach ($post as $clé => $valeur) {
-        $echo .= "<input type='hidden' name='" . $clé . "' value='" . $valeur . "'>";
+        $echo .= '<input type="hidden" name="' . $clé . '" value="' . $valeur . '">';
     }
     $echo .= "<input type='submit' class='post_return_button' value='Effectuer de nouveau la requête'></form>";
     echo $echo;

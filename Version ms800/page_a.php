@@ -128,7 +128,7 @@ function ajoute_input($nom) {
 
   $ret = "<li><label for='" . $nom . "'>" . $nom_affichage . "</label>";
   $ret .= "<input type='checkbox' id='" . $nom . "_cb' name='" . $nom . "_cb' value='true' " . $checked . ">";
-  $ret .= "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "...' value='" . $valeur_initiale . "'></li>";
+  $ret .= "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "...' value=#guillemet" . $valeur_initiale . "#guillemet></li>";
   return $ret;
 }
 
@@ -203,7 +203,7 @@ EOT;
 
 echo <<< EOT
     function afficheContraintes(table_sélectionnée) {
-        document.getElementById("liste_contraintes").innerHTML = à_afficher[table_sélectionnée];
+        document.getElementById("liste_contraintes").innerHTML = à_afficher[table_sélectionnée].replace(/#guillemet/g, '"').replace(/#apostrophe/g, "'");
     }
 </script>
 EOT;

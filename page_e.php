@@ -101,14 +101,24 @@ begin_main();
     }
 
     /*Cette fonction retourne un bloc de code HTML représentant un input de nom $nom.
+
     * Si la colonne $nom fais référence à une autre table, alors l'input sera une liste de toutes les valeurs existant dans la table référencée.
     * Si le nom de l'input contient "sexe" (insensible à la casse), alors l'input sera une liste de peux possibilités: M ou F.
     * Si le nom de l'input contient "date" (insensible à la casse), alors l'input sera une date.
     * Sinon, l'input sera simplement un bloc de texte classique.
+
     * L'input appartiendra à la classe $classe, ainsi que son label associé.
+
+    * Dans le cas d'un input de type liste, un input de texte sera ajouté. Lors de l'écriture dans cet input de type texte,
+    * la fonction recherche_liste est appelée ce qui permet, moyennant l'existence d'un tableau Javascript contenant
+    * le(s) tableaux de recherche, de filtrer la liste pour ne garder que les éléments dont le contenu contient ce qui est écrit dans l'input texte.
+
+    * Toujours dans le cas d'un input de type liste, si $valeur_vide n'est pas null, une option dont la valeur sera
+    * une chaîne de caractère vide et dont le contenu HTML sera $valeur_vide est ajoutée.
+
     * Si $nom contient des underscores, ils seront remplacés par des espaces pour l'affichage à l'écran.
     * De même, une majuscule est ajoutée au début de $nom lors de l'affichage.*/
-    function ajoute_input($nom, $nom_table, $classe, &$tableau_pour_recherche) {
+    function ajoute_input($nom, $nom_table, $classe, &$tableau_pour_recherche, $valeur_vide) {
         global $bdd;
         $clé_étrangères = $GLOBALS["clé_étrangères_par_table"][$nom_table];
 
@@ -128,35 +138,42 @@ begin_main();
             $tableau_pour_recherche = "[";
 
             $résultat = execute_requête_string($bdd, "SELECT " . $clé_étrangères[$nom][1] . " FROM " . $clé_étrangères[$nom][0], null);
-            $ret .= "<select id='" . $nom . "' name='" . $nom . "' class='" . $classe . "' onclick='recherche_liste(\"" . $nom . "\", " . $GLOBALS['INDEX_RECHERCHE_TABLEAUX'] . ")'>";
-            $GLOBALS['INDEX_RECHERCHE_TABLEAUX']++;
+            $ret .= "<select id='" . $nom . "' name='" . $nom . "' class='" . $classe . "'>";
+
+            if($valeur_vide != null) {
+                $tableau_pour_recherche .= "'<option>" . $valeur_vide . "</option>'";
+                $premier = false;
+                $ret .= "<option value=''>" . $valeur_vide . "</option>";
+            }
             foreach ($résultat as $tuple) {
                 if ($premier) {
-                    $tableau_pour_recherche .= "'<option value=" . str_replace("'", "#apostrophe", $tuple[0]) . ">" . str_replace("'", "#apostrophe", $tuple[0]) . "</option>'";
+                    $tableau_pour_recherche .= "\"<option>" . $tuple[0] . "</option>\"";
                     $premier = false;
                 } else {
-                    $tableau_pour_recherche .= ", '<option value=" . str_replace("'", "#apostrophe", $tuple[0]) . ">" . str_replace("'", "#apostrophe", $tuple[0]) . "</option>'";
+                    $tableau_pour_recherche .= ", \"<option>" . $tuple[0] . "</option>\"";
                 }
 
-                $ret .= "<option value='" . $tuple[0] . "'>" . $tuple[0] . "</option>";
+                $ret .= "<option value=\"" . $tuple[0] . "\">" . $tuple[0] . "</option>";
             }
+
             $tableau_pour_recherche .= "]";
 
-            $ret .= "<script>document.getElementById('" . $nom . "').value='" . $valeur_initiale . "'</script>";
+            $ret .= "<script>document.getElementById('" . $nom . "').value=\"" . $valeur_initiale . "\"</script>";
             $ret .= "</select>";
-            $ret .= "Cliquez sur la liste pour n'afficher que les éléments qui contiennent la chaîne de caractère présente dans le champ ci-dessous.</br>";
-            $ret .= "<input type='text' id='" . $nom . "_champ_recherche' class='" . $classe ."'>";
+            $ret .= "Écrivez dans la zone de texte ci-dessous pour ne garder dans la liste que les éléments qui contiennent le texte écrit.</br>";
+            $ret .= "<input type='text' id='" . $nom . "_champ_recherche' class='" . $classe ."' onkeyup='recherche_liste(\"" . $nom . "\", " . $GLOBALS['INDEX_RECHERCHE_TABLEAUX'] . ")'>";
+            $GLOBALS['INDEX_RECHERCHE_TABLEAUX']++;
         } elseif (stristr($nom, "sexe") != false) {
             $ret .= "<select id='" . $nom . "' name='" . $nom . "' class='" . $classe . "'>";
             $ret .= "<option value='M'>M</option>";
             $ret .= "<option value='F'>F</option>";
-            $ret .= "<script>document.getElementById('" . $nom . "').value='" . $valeur_initiale . "'</script>";
+            $ret .= "<script>document.getElementById('" . $nom . "').value=\"" . $valeur_initiale . "\"</script>";
             $ret .= "</select>";
         } elseif (stristr($nom, "date") != false) {
-            $ret .= "<input type='date' id='" . $nom . "' name='" . $nom . "' value='" . $valeur_initiale . "' class='" . $classe . "'>";
+            $ret .= "<input type='date' id='" . $nom . "' name='" . $nom . "' value=\"" . $valeur_initiale . "\" class='" . $classe . "'>";
         }
         else {
-            $ret .= "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "...' value='" . $valeur_initiale . "' class='" . $classe . "'>";
+            $ret .= "<input type='text' id='" . $nom . "' name='" . $nom . "' placeholder='" . $nom_affichage . "...' value=\"" . $valeur_initiale . "\" class='" . $classe . "'>";
         }
 
         return $ret;
@@ -220,7 +237,7 @@ EOT;
     $premier = true;
     foreach ($colonnes_par_table["Animal"] as $colonne) {
         $recherche_tableaux_tmp = "";
-        echo ajoute_input($colonne, "Animal", null, $recherche_tableaux_tmp);
+        echo ajoute_input($colonne, "Animal", null, $recherche_tableaux_tmp, null);
         if($recherche_tableaux_tmp != "") {
             if($premier) {
                 $recherche_tableaux .= $recherche_tableaux_tmp;
@@ -244,25 +261,31 @@ echo '  <input type="hidden" id="avertissement_confirmé" name="avertissement_co
 
         <div id="institution_2_modes"></div>';
 
-    $nouvelle_institution = "var nouvelle_institution = \"" . str_replace('"', "#guillemet", ajoute_input("nom", "Institution", null, $recherche_tableaux_tmp)) . "\"";
+    $nouvelle_institution = "var nouvelle_institution = \"" . str_replace('"', "#guillemet", ajoute_input("nom", "Institution", null, $recherche_tableaux_tmp, null)) . "\"";
 
     //On crée une fausse référence afin d'obtenir la liste de toutes les institutions existantes
     $clé_étrangères_par_table["Institution"]["nom"] = array("Institution", "nom");
 
     $recherche_tableaux_tmp = "";
-    $pas_nouvelle_institution = "var pas_nouvelle_institution = \"" . str_replace('"', "#guillemet", ajoute_input("nom", "Institution", null, $recherche_tableaux_tmp)) . "\"";
+    $pas_nouvelle_institution = "var pas_nouvelle_institution = \"" . str_replace('"', "#guillemet", ajoute_input("nom", "Institution", null, $recherche_tableaux_tmp, "Aucune institution (pas de provenance)")) . "\"";
     $recherche_tableaux .= ", " . $recherche_tableaux_tmp . "];";
 
     //On supprime les balises scripts car il y en a déjà autour de la fonction
-    $pas_nouvelle_institution = str_replace("<script>", "", $pas_nouvelle_institution);
-    $pas_nouvelle_institution = str_replace("</script>", "", $pas_nouvelle_institution);
-    unset($clé_étrangères_par_table["Institution"]["nom"]);
-    //Ajout d'une première option qui correspond à aucune institution (pas de provenance)
-    $pas_nouvelle_institution = stristr($pas_nouvelle_institution, "<option ", true) . "<option value=''>Aucune institution (pas de provenance)</option>" . stristr($pas_nouvelle_institution, "<option ");
+    $enlève_script = explode("<script>", $pas_nouvelle_institution);
+    $pas_nouvelle_institution = $enlève_script[0];  //avant le <script>
+    $enlève_script = explode("</script>", $enlève_script[1]);
+    $pas_nouvelle_institution .= $enlève_script[1]; //après le </script>
+    $script = $enlève_script[0];    //avant le </script> et après le <script>
 
+    //On récupère la valeur initiale car il faut quand même pouvoir la donner à la liste
+    $valeur_initiale_institution_tmp = explode("value=#guillemet", $script);
+    $valeur_initiale_institution_tmp = explode("#guillemet", $valeur_initiale_institution_tmp[1]);   //après le value=#guillemet
+    $valeur_initiale_institution = $valeur_initiale_institution_tmp[0]; //avant le dernier #guillemet mais aussi après le value=#guillemet
+    unset($clé_étrangères_par_table["Institution"]["nom"]);
+    
     foreach ($colonnes_par_table["Institution"] as $colonne) {
         if ($colonne != "nom") {
-            echo ajoute_input($colonne, "Institution", "newInstitution", $recherche_tableaux_tmp);
+            echo ajoute_input($colonne, "Institution", "newInstitution", $recherche_tableaux_tmp, null);
         }
     }
 
@@ -284,7 +307,10 @@ EOT;
 
     echo $recherche_tableaux;
 
+    echo 'var valeur_initiale_institution = "' . $valeur_initiale_institution . '"';
+
 echo <<< EOT
+
 function checkBoxClick() {
     var affichage_institution = document.getElementById("institution_2_modes");
 
@@ -292,7 +318,10 @@ function checkBoxClick() {
 
     var toChange = document.getElementsByClassName("newInstitution");
 
-    if (checkBox.checked == true){
+    //fixer display à none empêche également de recevoir l'élément en utilisant getElementById, cette ligne ne retourne donc qu'un seul élément
+    var précédent_mode_affichage = document.getElementById("nom");
+
+    if (checkBox.checked == true){  //nouvelle institution
         affichage_institution.innerHTML = nouvelle_institution.replace(/#guillemet/g, '"');
         for(i=0; i<toChange.length; i++) {
             toChange[i].style.display = "block";
@@ -304,6 +333,23 @@ function checkBoxClick() {
             toChange[i].style.display = "none";
         }
     }
+
+    //Le document.getElementById("nom") a changé suite au if précédent
+    if (précédent_mode_affichage == null) {
+        document.getElementById("nom").value = valeur_initiale_institution;
+    } else {
+        console.log(précédent_mode_affichage.value);
+        document.getElementById("nom").value = précédent_mode_affichage.value;
+    }
+}
+
+function includes_case_insensitive(conteneur, contenu) {
+    for (var i = 0; i <= conteneur.length - contenu.length; i++) {
+        if (conteneur.substr(i, contenu.length).localeCompare(contenu, "fr", {sensitivity: "accent"}) == 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function recherche_liste(id_liste, index_tableau_options) {
@@ -319,10 +365,9 @@ function recherche_liste(id_liste, index_tableau_options) {
         nom_option = nom_option_tbl[1];
         nom_option_tbl = nom_option.split("<");
         nom_option = nom_option_tbl[0];
-        nom_option = nom_option.replace(/#apostrophe/g, "'");
 
-        if(nom_option.includes(recherche)) {
-            liste.innerHTML += tableau_options[i].replace(/#apostrophe/g, "'");
+        if(includes_case_insensitive(nom_option, recherche)) {
+            liste.innerHTML += tableau_options[i];
         }
     }
 }
