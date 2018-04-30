@@ -81,7 +81,7 @@ else{
     $idSuccess = false;
     if(array_key_exists('uname', $_POST) and array_key_exists('password', $_POST)){
         try{
-            new PDO(get_pdo_path(), htmlspecialchars($_POST['uname']), htmlspecialchars($_POST['password']));
+            new PDO(adresse_pdo(), htmlspecialchars($_POST['uname']), htmlspecialchars($_POST['password']));
             $idSuccess = true;
         }
         catch(PDOException $e){}

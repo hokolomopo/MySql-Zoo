@@ -41,7 +41,7 @@ EOT;
     //ajoute le code html constituant le debut de la partie principale 
     debut_main();
 
-    function invalid_request()
+    function requête_invalide()
     {
         echo "requête invalide, veuillez utiliser le formulaire de la page_a afin de faire les requêtes et ne pas envoyer vos propres requêtes au serveur.";
         bouton_retour($GLOBALS['page_de_retour']);
@@ -50,7 +50,7 @@ EOT;
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
+        $bdd = new PDO(adresse_pdo(), $_SESSION['uname'], $_SESSION['password']);
     }
     catch(Exception $e)
     {
@@ -65,11 +65,11 @@ EOT;
     }
 
     if(!array_key_exists('table', $_POST))
-        invalid_request();
+        requête_invalide();
 
-    $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $_POST['table'] . "' AND table_schema='" . get_dbname() . "'", null);
+    $colonnes_tmp = execute_requête_string($bdd, "SELECT column_name FROM information_schema.columns WHERE table_name = '" . $_POST['table'] . "' AND table_schema='" . bd_nom() . "'", null);
     if (count($colonnes_tmp) == 0) {
-        invalid_request();
+        requête_invalide();
     }
 
     $i = 0;
@@ -112,7 +112,7 @@ EOT;
     foreach($colonnes as $nom_colonne){
 
         if(!isset($_POST[$nom_colonne])) {
-            invalid_request();
+            requête_invalide();
         }
 
         $info = execute_sql_classique($bdd, 'get_db_information.sql', array(':table' => $_POST['table'], ':column' => $nom_colonne));

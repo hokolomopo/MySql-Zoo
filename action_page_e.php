@@ -90,7 +90,7 @@ EOT;
 
     try
     {
-        $bdd = new PDO(get_pdo_path(), $_SESSION['uname'], $_SESSION['password']);
+        $bdd = new PDO(adresse_pdo(), $_SESSION['uname'], $_SESSION['password']);
     }
     catch (Exception $e)
     {
