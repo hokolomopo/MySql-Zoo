@@ -210,8 +210,10 @@ function anime_trace_pas($nb_traces) {
             image_style1.opacity = 1.0 - transparence / 10.0;
             image_style2.opacity = transparence / 10.0;
 
-            if (transparence != 10) {
+            if (transparence < 10) {
                 setTimeout(anime_aux, 100);
+            } else {
+                setTimeout(anime, 1200);
             }
         }
 
@@ -240,7 +242,6 @@ function anime_trace_pas($nb_traces) {
             image_style2 = document.getElementById("img_trace_pas_" + index_courant).style;
             transparence = 0;
             anime_aux();
-            setTimeout(anime, 2000);
         }
 
         setTimeout(anime, 2000);

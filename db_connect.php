@@ -1,6 +1,6 @@
 <?php 
 
-$dbName = "zoo";
+$dbName = "group24";
 
 function adresse_pdo()
 {
