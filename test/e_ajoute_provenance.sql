@@ -1,1 +1,0 @@
-Insert into Provenance Values(:nom_scientifique, :n_puce, :nom_institution);

@@ -91,7 +91,15 @@ echo <<< EOT
     </div>
 EOT;
 
+trace_pas(15, false);
+
 fin_main();
+
+echo "<script>";
+
+anime_trace_pas(15);
+
+echo "</script>";
 
 echo <<< EOT
     </body>

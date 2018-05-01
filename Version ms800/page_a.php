@@ -73,6 +73,7 @@ input[type=submit]:hover {
 }
 
 .form {
+    float: left;
     position: :absolute;
     left : 100px;
     width: 60%;
@@ -255,7 +256,15 @@ EOT;
   </div>
 EOT;
 
+trace_pas(10, true);
+
 fin_main();
+
+echo "<script>";
+
+anime_trace_pas(10);
+
+echo "</script>";
 
 echo <<< EOT
 

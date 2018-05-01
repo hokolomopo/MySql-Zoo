@@ -58,6 +58,7 @@ input[type=submit]:hover {
 }
 
 .form {
+    float: left;
     position: :absolute;
     left : 100px;
     width: 60%;
@@ -294,7 +295,10 @@ echo <<< EOT
     <input type="submit" value="Soumettre">
   </form>
 </div>
+
 EOT;
+
+trace_pas(13, true);
 
 fin_main();
 
@@ -373,6 +377,13 @@ function recherche_liste(id_liste, index_tableau_options) {
 }
 
 checkBoxClick();
+
+EOT;
+
+anime_trace_pas(13);
+
+echo <<< EOT
+
 </script>
 
      

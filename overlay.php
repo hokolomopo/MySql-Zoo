@@ -104,6 +104,31 @@ function style_fond()
     padding-left: 37px;
 }
 
+    .img_trace_pas_vertical{
+        width: 50px;
+        heigth: 50px;
+        position: absolute;
+        opacity: 0.0;
+        transform: rotate(180deg);
+}
+
+    .img_trace_pas_horizontal{
+        width: 50px;
+        heigth: 50px;
+        position: absolute;
+        opacity: 0.0;
+        transform: rotate(90deg);
+}
+
+    .images_pas_vertical{
+        position: relative;
+        display: inline;
+}
+    .images_pas_horizontal{
+        position: relative;
+        height: 130px;
+}
+
 EOT;
 }
 
@@ -157,6 +182,102 @@ function debut_main()
 
 function fin_main()
 {
+    echo '</div>';
+}
+
+$nb_traces = 0;
+
+function anime_trace_pas($nb_traces) {
+    if ($nb_traces > $GLOBALS['nb_traces']) {
+        $nb_traces = $GLOBALS['nb_traces'];
+    }
+    if ($nb_traces < 2) {
+        return;
+    }
+
+    echo 'var nb_traces = ' . $nb_traces . ';';
+    echo <<< EOT
+        var index_courant = -1;
+        var image_style1;
+        var image_style2;
+        var transparence;
+        var sens = 1;   //sens vaut 1 quand on augmente les indexs, -1 quand on les décrémente
+                        //dans les 2 cas, il suffit donc d'ajouter sens à l'index : on évite une condition
+
+        function anime_aux() {
+            transparence += 2;
+            //On travaille avec des entiers et on divise par 10 car l'addition de double souffre de problèmes d'approximation
+            image_style1.opacity = 1.0 - transparence / 10.0;
+            image_style2.opacity = transparence / 10.0;
+
+            if (transparence != 10) {
+                setTimeout(anime_aux, 100);
+            }
+        }
+
+        function anime() {
+            if (index_courant == nb_traces - 1) {
+                rotation = (rotation + 180) % 360;
+                for (var i = 0; i < nb_traces; i++) {
+                    document.getElementById("img_trace_pas_" + i).style.transform = "rotate(" + rotation + "deg)";
+                }
+                sens = -1;
+            }
+            if (index_courant == 0) {
+                rotation = (rotation + 180) % 360;
+                for (var i = 0; i < nb_traces; i++) {
+                    document.getElementById("img_trace_pas_" + i).style.transform = "rotate(" + rotation + "deg)";
+                }
+                sens = 1;
+            }
+
+            if (index_courant == -1) {
+                index_courant = 0;
+            }
+
+            image_style1 = document.getElementById("img_trace_pas_" + index_courant).style;
+            index_courant = index_courant + sens;
+            image_style2 = document.getElementById("img_trace_pas_" + index_courant).style;
+            transparence = 0;
+            anime_aux();
+            setTimeout(anime, 2000);
+        }
+
+        setTimeout(anime, 2000);
+EOT;
+}
+
+//$direction_affichage : true pour vertical, false pour horizontal
+function trace_pas($nb_traces, $direction_affichage) {
+    $GLOBALS['nb_traces'] = $nb_traces;
+    if($direction_affichage) {
+        $fin_nom_classe = "_vertical";
+        $padding_principal = "top";
+        $padding_secondaire = "left";
+        echo "<script>var rotation = 180</script>";
+    } else {
+        $fin_nom_classe = "_horizontal";
+        $padding_principal = "left";
+        $padding_secondaire = "top";
+        echo "<script>var rotation = 90</script>";
+    }
+    echo '<div class="images_pas' . $fin_nom_classe . '">';
+    $padding_valeur = 20;
+    for ($i = 0; $i < $nb_traces; $i++) {
+        $echo = '<img class="img_trace_pas' . $fin_nom_classe . '" id="img_trace_pas_' . $i . '" src="img_trace_de_pas.png" alt="trace de pas" style="' . $padding_principal . ': ' . $padding_valeur . 'px;';
+
+        //le 2éme, 4éme, 6éme, ... élément
+        if ( ($i % 2) != 0) {
+            $echo .= ' ' . $padding_secondaire . ': 50px;';
+        }
+
+        if( $i == 0) {
+            $echo .= ' opacity: 1.0;';
+        }
+        $echo .= '">';
+        echo $echo;
+        $padding_valeur += 70;
+    }
     echo '</div>';
 }
 
